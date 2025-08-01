@@ -26,7 +26,10 @@ module.exports = {
     const { name, description, month_ref } = req.body
     try {
       const [result] = await FinancialEntity.create({ name, description, month_ref })
-      res.status(201).json({ message: 'Created', id: result.insertId })
+      res.status(201).location(`/api/v1/entities/${result.insertId}`).json({
+        message: 'Entidade criada',
+        id: result.insertId
+      })
     } catch (err) {
       console.error(err)
       res.status(500).json({ error: 'Erro ao inserir entidade' })
@@ -42,6 +45,6 @@ module.exports = {
 
   async remove(req, res) {
     await FinancialEntity.delete(req.params.id)
-    res.json({ message: 'Deleted' })
+    res.status(204).send()
   }
 }

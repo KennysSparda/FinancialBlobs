@@ -1,11 +1,11 @@
 const axios = require('axios')
 
-const BASE_URL = 'http://localhost:3001/items'
-const ENTITY_URL = 'http://localhost:3001/entities'
+const BASE_URL = 'http://localhost:3001/api/v1/items'
+const ENTITY_URL = 'http://localhost:3001/api/v1/entities'
 
 async function testItemCRUD() {
   try {
-    // 1️⃣ Criar uma entidade associada (pois cada item precisa de entity_id)
+    // Criar uma entidade associada (pois cada item precisa de entity_id)
     const entityRes = await axios.post(ENTITY_URL, {
       name: 'Entidade Teste Itens',
       description: 'Entidade temporária para testar itens',
@@ -15,7 +15,7 @@ async function testItemCRUD() {
     const entityId = entityRes.data.id || entityRes.data.insertId
     console.log('🏷️ Entidade criada para testes de item:', entityId)
 
-    // 2️⃣ Criar um item financeiro vinculado à entidade
+    // Criar um item financeiro vinculado à entidade
     const createRes = await axios.post(BASE_URL, {
       entity_id: entityId,
       description: 'Compra de supermercado',
@@ -27,20 +27,20 @@ async function testItemCRUD() {
     })
     console.log('🟢 Item criado:', createRes.data)
 
-    // 3️⃣ Listar todos os itens
-    const listRes = await axios.get(BASE_URL)
+    // Listar todos os itens
+    const listRes1 = await axios.get(BASE_URL)
     console.log('📋 Todos os itens:')
-    console.table(listRes.data)
+    console.table(listRes1.data)
 
-    // 4️⃣ Buscar o item recém-criado
-    const createdItem = listRes.data.find(i => i.entity_id === entityId)
+    // Buscar o item recém-criado
+    const createdItem = listRes1.data.find(i => i.entity_id === entityId)
     const itemId = createdItem?.id
     if (!itemId) throw new Error('Item não encontrado.')
 
     const getRes = await axios.get(`${BASE_URL}/${itemId}`)
     console.log('🔍 Item específico:', getRes.data)
 
-    // 5️⃣ Atualizar o item
+    // Atualizar o item
     const updateRes = await axios.put(`${BASE_URL}/${itemId}`, {
       description: 'Compra no mercado atualizada',
       type: 'saida',
@@ -50,12 +50,22 @@ async function testItemCRUD() {
       installment_max: 3
     })
     console.log('✏️ Item atualizado:', updateRes.data)
+  
+    // Listar todos os itens
+    const listRes2 = await axios.get(BASE_URL)
+    console.log('📋 Todos os itens:')
+    console.table(listRes2.data)
 
-    // 6️⃣ Remover o item
+    // Remover o item
     const deleteRes = await axios.delete(`${BASE_URL}/${itemId}`)
     console.log('🗑️ Item deletado:', deleteRes.data)
 
-    // 7️⃣ Limpeza: deletar entidade de teste
+    // Listar todos os itens
+    const listRes3 = await axios.get(BASE_URL)
+    console.log('📋 Todos os itens:')
+    console.table(listRes3.data)
+
+    // Limpeza: deletar entidade de teste
     const cleanEntity = await axios.delete(`${ENTITY_URL}/${entityId}`)
     console.log('♻️ Entidade de teste removida:', cleanEntity.data)
 

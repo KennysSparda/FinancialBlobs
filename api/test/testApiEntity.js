@@ -1,6 +1,6 @@
 const axios = require('axios')
 
-const BASE_URL = 'http://localhost:3001/entities'
+const BASE_URL = 'http://localhost:3001/api/v1/entities'
 
 async function testCRUD() {
   try {

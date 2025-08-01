@@ -1,3 +1,5 @@
+// /api/server.js
+
 const express = require('express')
 const cors = require('cors')
 const app = express()
@@ -9,8 +11,8 @@ const itemRoutes = require('./routes/items')
 app.use(cors())
 app.use(express.json())
 
-app.use('/entities', entityRoutes)
-app.use('/items', itemRoutes)
+app.use('/api/v1/entities', entityRoutes)
+app.use('/api/v1/items', itemRoutes)
 
 app.listen(port, () => {
   console.log(`Servidor rodando em http://localhost:${port}`)

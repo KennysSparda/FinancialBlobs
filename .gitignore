@@ -1,2 +1,2 @@
 node_modules
-logininfo.js
+api/utils/loginInfo.js
