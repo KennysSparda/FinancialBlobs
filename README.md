@@ -16,12 +16,12 @@ O **FinancialBlobs** é uma aplicação que permite o controle de entidades fina
 
 | Método | Rota                    | Descrição                         |
 |--------|-------------------------|----------------------------------|
-| GET    | `/entities`             | Lista todas as entidades          |
-| GET    | `/entities/:id`         | Retorna uma entidade específica   |
-| POST   | `/entities`             | Cria uma nova entidade            |
-| PUT    | `/entities/:id`         | Atualiza uma entidade existente   |
-| DELETE | `/entities/:id`         | Remove uma entidade               |
-| POST   | `/entities/generate-next-month` | Gera os dados do próximo mês (recebe `{ fromMonth: "YYYY-MM-DD" }`) |
+| GET    | `/api/v1/entities`             | Lista todas as entidades          |
+| GET    | `/api/v1/entities/:id`         | Retorna uma entidade específica   |
+| POST   | `/api/v1/entities`             | Cria uma nova entidade            |
+| PUT    | `/api/v1/entities/:id`         | Atualiza uma entidade existente   |
+| DELETE | `/api/v1/entities/:id`         | Remove uma entidade               |
+| POST   | `/api/v1/entities/generate-next-month` | Gera os dados do próximo mês (recebe `{ fromMonth: "YYYY-MM-DD" }`) |
 
 ---
 
@@ -29,11 +29,11 @@ O **FinancialBlobs** é uma aplicação que permite o controle de entidades fina
 
 | Método | Rota            | Descrição                       |
 |--------|-----------------|---------------------------------|
-| GET    | `/items`        | Lista todos os itens            |
-| GET    | `/items/:id`    | Retorna um item específico      |
-| POST   | `/items`        | Cria um novo item              |
-| PUT    | `/items/:id`    | Atualiza um item existente      |
-| DELETE | `/items/:id`    | Remove um item                 |
+| GET    | `/api/v1/items`        | Lista todos os itens            |
+| GET    | `/api/v1/items/:id`    | Retorna um item específico      |
+| POST   | `/api/v1/items`        | Cria um novo item              |
+| PUT    | `/api/v1/items/:id`    | Atualiza um item existente      |
+| DELETE | `/api/v1/items/:id`    | Remove um item                 |
 
 ---
 
