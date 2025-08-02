@@ -1,2 +1,4 @@
 node_modules
-api/utils/loginInfo.js
+.env
+# Jest coverage reports
+/coverage/

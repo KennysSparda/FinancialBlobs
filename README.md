@@ -21,7 +21,7 @@ O **FinancialBlobs** é uma aplicação que permite o controle de entidades fina
 | POST   | `/api/v1/entities`             | Cria uma nova entidade            |
 | PUT    | `/api/v1/entities/:id`         | Atualiza uma entidade existente   |
 | DELETE | `/api/v1/entities/:id`         | Remove uma entidade               |
-| POST   | `/api/v1/entities/generate-next-month` | Gera os dados do próximo mês (recebe `{ fromMonth: "YYYY-MM-DD" }`) |
+| POST   | `/api/v1/entities/next-month` | Gera os dados do próximo mês (recebe `{ fromMonth: "YYYY-MM-DD" }`) |
 
 ---
 
@@ -40,7 +40,7 @@ O **FinancialBlobs** é uma aplicação que permite o controle de entidades fina
 ## ▶️ Como Rodar o Projeto
 1. API (Back-end)
 
-Configure o arquivo [loginInfo](/api/utils/loginInfo.js) primeiro
+Configure o arquivo [.env](/api/.env) primeiro
 ```bash
   cd api
   npm install
@@ -48,12 +48,11 @@ Configure o arquivo [loginInfo](/api/utils/loginInfo.js) primeiro
 ```
 A API estará disponível em http://localhost:3001.
 
-## 🧪 Testes de Endpoints
-Para testar os endpoints manualmente com um script:
+## 🧪 Testes E2E
+Para testar os endpoints:
 ```bash
   cd api
-  node test/testApiEntity.js
-  node test/testApiItems.js
+  npm test
 ```
 
 ## 📝 Requisitos
