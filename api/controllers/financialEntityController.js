@@ -2,6 +2,9 @@
 
 const FinancialEntity = require('../models/financialEntityModel')
 const { ensureNextMonths } = require('../services/monthGenerator')
+const FinancialItem = require('../models/financialItemModel')
+
+
 
 module.exports = {
   async list(req, res) {
@@ -36,7 +39,6 @@ module.exports = {
     }
   },
 
-
   async update(req, res) {
     const { name, description, month_ref } = req.body
     await FinancialEntity.update(req.params.id, { name, description, month_ref })
@@ -46,5 +48,15 @@ module.exports = {
   async remove(req, res) {
     await FinancialEntity.delete(req.params.id)
     res.status(204).send()
+  },
+
+  async listItemsByEntityId(req, res) {
+    try {
+      const [items] = await FinancialItem.getByEntityId(req.params.id)
+      res.status(200).json(items)
+    } catch (err) {
+      console.error('[ERRO] Falha ao buscar itens:', err)
+      res.status(500).json({ error: 'Erro ao buscar itens da entidade' })
+    }
   }
 }

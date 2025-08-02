@@ -1,12 +1,16 @@
 const db = require('../utils/db')
 
-const FinancialItem = {
+module.exports = {
   getAll: () => {
     return db.query('SELECT * FROM financial_items')
   },
 
   getById: (id) => {
     return db.query('SELECT * FROM financial_items WHERE id = ?', [id])
+  },
+
+  getByEntityId: (entityId) => {
+    return db.query('SELECT * FROM financial_items WHERE entity_id = ?', [entityId])
   },
 
   create: (data) => {
@@ -48,5 +52,3 @@ const FinancialItem = {
     return db.query('DELETE FROM financial_items WHERE id = ?', [id])
   }
 }
-
-module.exports = FinancialItem
