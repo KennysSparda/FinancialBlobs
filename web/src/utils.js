@@ -1,6 +1,4 @@
 export function sumByMonth(items, offset = 0) {
-    items.forEach(item => {console.log(item.month_ref)})
-
   const now = new Date()
   const refMonth = `${now.getFullYear()}-${String(now.getMonth() + 1 + offset).padStart(2, '0')}`
 
@@ -8,7 +6,6 @@ export function sumByMonth(items, offset = 0) {
     .filter(item => {
     const itemDate = new Date(item.month_ref)
     const itemMonth = `${itemDate.getFullYear()}-${String(itemDate.getMonth() + 1).padStart(2, '0')}`
-    console.log('[DEBUG] Comparando:', itemMonth, '===', refMonth)
     return itemMonth === refMonth
     })
     .reduce((acc, curr) => acc + parseFloat(curr.value) * (curr.type === 'entrada' ? +1 : 1), 0)
