@@ -4,10 +4,11 @@ export function createEntityRow(entity) {
   const row = document.createElement('tr')
   row.innerHTML = `
     <td><button class="btn btn-link p-0 view-entity" data-id="${entity.id}">${entity.name}</button></td>
-    <td>R$ ${sumByMonth(entity.items, 0)}</td>
-    <td>R$ ${sumByMonth(entity.items, 1)}</td>
-    <td>R$ ${sumByMonth(entity.items, 2)}</td>
+    <td>${styledValue(sumByMonth(entity.items, 0))}</td>
+    <td>${styledValue(sumByMonth(entity.items, 1))}</td>
+    <td>${styledValue(sumByMonth(entity.items, 2))}</td>
   `
+
 
   // Criar célula extra para o botão + Item
   const btnCell = document.createElement('td')
@@ -24,12 +25,12 @@ export function createEntityRow(entity) {
 export function createTotalRow(tipo, list) {
   const total = calculateTotals(list)
   const row = document.createElement('tr')
-  row.classList.add('table-secondary')
+  // row.classList.add('table-secondary')
   row.innerHTML = `
     <td><strong>Total de ${tipo}</strong></td>
-    <td><strong>R$ ${total[0]}</strong></td>
-    <td><strong>R$ ${total[1]}</strong></td>
-    <td><strong>R$ ${total[2]}</strong></td>
+    <td><strong>${styledValue(total[0])}</strong></td>
+    <td><strong>${styledValue(total[1])}</strong></td>
+    <td><strong>${styledValue(total[2])}</strong></td>
     <td></td>
   `
   return row
@@ -38,15 +39,19 @@ export function createTotalRow(tipo, list) {
 export function createSaldoFinalRow(entradas, saidas) {
   const saldo = calculateTotals([...entradas, ...saidas])
   const row = document.createElement('tr')
-  row.classList.add('table-success')
+  // row.classList.add('table-success')
   row.innerHTML = `
     <td><strong>Saldo Final</strong></td>
-    <td><strong>R$ ${saldo[0]}</strong></td>
-    <td><strong>R$ ${saldo[1]}</strong></td>
-    <td><strong>R$ ${saldo[2]}</strong></td>
+    <td><strong>${styledValue(saldo[0])}</strong></td>
+    <td><strong>${styledValue(saldo[1])}</strong></td>
+    <td><strong>${styledValue(saldo[2])}</strong></td>
     <td></td>
   `
   return row
 }
 
-
+function styledValue(value) {
+  const floatVal = parseFloat(value)
+  const colorClass = floatVal > 0 ? 'text-success' : floatVal < 0 ? 'text-danger' : 'text-muted'
+  return `<span class="${colorClass}">R$ ${parseFloat(value).toFixed(2)}</span>`
+}

@@ -1,0 +1,49 @@
+table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 0.9rem;
+}
+
+th, td {
+    padding: 0.5rem 0.75rem;
+    text-align: right;
+    border: none;
+}
+
+td:first-child, th:first-child {
+    text-align: left;
+}
+
+tr:not(:last-child) {
+    border-bottom: 1px solid #eee;
+}
+
+thead {
+    position: sticky;
+    top: 0;
+    background-color: #f9f9f9;
+    z-index: 1;
+}
+
+.btn-link {
+    font-weight: 500;
+    color: #0d6efd;
+    text-decoration: none;
+}
+
+.btn-link:hover {
+    text-decoration: underline;
+}
+
+.btn-outline-primary {
+    font-size: 0.8rem;
+    padding: 0.25rem 0.5rem;
+}
+
+.table-secondary {
+    background-color: #f1f3f5;
+}
+
+.table-success {
+    background-color: #e6ffed;
+}
