@@ -28,10 +28,28 @@ module.exports = {
 
   async create(req, res) {
     try {
-      const { name, value, entity_id, month_ref } = req.body
-      const [result] = await FinancialItem.create({ name, value, entity_id, month_ref })
+      const {
+        entity_id,
+        description,
+        type,
+        value,
+        recurring,
+        installment_now,
+        installment_max
+      } = req.body
+
+      const [result] = await FinancialItem.create({
+        entity_id,
+        description,
+        type,
+        value,
+        recurring,
+        installment_now,
+        installment_max
+      })
+
       res.status(201).location(`/api/v1/items/${result.insertId}`).json({
-        message: 'Item criado',
+        message: 'Item criado com sucesso',
         id: result.insertId
       })
     } catch (err) {
@@ -42,8 +60,24 @@ module.exports = {
 
   async update(req, res) {
     try {
-      const { name, value, entity_id, month_ref } = req.body
-      await FinancialItem.update(req.params.id, { name, value, entity_id, month_ref })
+      const {
+        description,
+        type,
+        value,
+        recurring,
+        installment_now,
+        installment_max
+      } = req.body
+
+      await FinancialItem.update(req.params.id, {
+        description,
+        type,
+        value,
+        recurring,
+        installment_now,
+        installment_max
+      })
+
       res.status(200).json({ message: 'Item atualizado com sucesso' })
     } catch (err) {
       console.error(err)

@@ -14,26 +14,27 @@ O **FinancialBlobs** é uma aplicação que permite o controle de entidades fina
 
 ## 📁 Entidades Financeiras
 
-| Método | Rota                    | Descrição                         |
-|--------|-------------------------|----------------------------------|
-| GET    | `/api/v1/entities`             | Lista todas as entidades          |
-| GET    | `/api/v1/entities/:id`         | Retorna uma entidade específica   |
-| POST   | `/api/v1/entities`             | Cria uma nova entidade            |
-| PUT    | `/api/v1/entities/:id`         | Atualiza uma entidade existente   |
-| DELETE | `/api/v1/entities/:id`         | Remove uma entidade               |
-| POST   | `/api/v1/entities/next-month` | Gera os dados do próximo mês (recebe `{ fromMonth: "YYYY-MM-DD" }`) |
+| Método | Rota                                      | Descrição                                                |
+|--------|-------------------------------------------|-----------------------------------------------------------|
+| GET    | `/api/v1/entities`                        | Lista todas as entidades                                 |
+| GET    | `/api/v1/entities/:id`                    | Retorna uma entidade específica                          |
+| GET    | `/api/v1/entities/:id/items`              | Lista os itens vinculados a uma entidade específica      |
+| POST   | `/api/v1/entities`                        | Cria uma nova entidade                                   |
+| PUT    | `/api/v1/entities/:id`                    | Atualiza uma entidade existente                          |
+| DELETE | `/api/v1/entities/:id`                    | Remove uma entidade                                      |
+| POST   | `/api/v1/entities/generate-next-month`    | Gera os dados do próximo mês (recebe `{ fromMonth }`)   |
 
 ---
 
 ## 📄 Itens Financeiros
 
-| Método | Rota            | Descrição                       |
-|--------|-----------------|---------------------------------|
-| GET    | `/api/v1/items`        | Lista todos os itens            |
-| GET    | `/api/v1/items/:id`    | Retorna um item específico      |
-| POST   | `/api/v1/items`        | Cria um novo item              |
-| PUT    | `/api/v1/items/:id`    | Atualiza um item existente      |
-| DELETE | `/api/v1/items/:id`    | Remove um item                 |
+| Método | Rota                     | Descrição                    |
+|--------|--------------------------|------------------------------|
+| GET    | `/api/v1/items`          | Lista todos os itens         |
+| GET    | `/api/v1/items/:id`      | Retorna um item específico   |
+| POST   | `/api/v1/items`          | Cria um novo item            |
+| PUT    | `/api/v1/items/:id`      | Atualiza um item existente   |
+| DELETE | `/api/v1/items/:id`      | Remove um item               |
 
 ---
 
