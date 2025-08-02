@@ -4,8 +4,6 @@ const FinancialEntity = require('../models/financialEntityModel')
 const { ensureNextMonths } = require('../services/monthGenerator')
 const FinancialItem = require('../models/financialItemModel')
 
-
-
 module.exports = {
   async list(req, res) {
     const today = new Date()

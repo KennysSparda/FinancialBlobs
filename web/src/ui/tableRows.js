@@ -8,6 +8,16 @@ export function createEntityRow(entity) {
     <td>R$ ${sumByMonth(entity.items, 1)}</td>
     <td>R$ ${sumByMonth(entity.items, 2)}</td>
   `
+
+  // Criar célula extra para o botão + Item
+  const btnCell = document.createElement('td')
+  const btnAddItem = document.createElement('button')
+  btnAddItem.textContent = '+ Item'
+  btnAddItem.className = 'btn btn-sm btn-outline-primary ms-2'
+  btnAddItem.dataset.entityId = entity.id
+
+  btnCell.appendChild(btnAddItem)
+  row.appendChild(btnCell)
   return row
 }
 
@@ -20,6 +30,7 @@ export function createTotalRow(tipo, list) {
     <td><strong>R$ ${total[0]}</strong></td>
     <td><strong>R$ ${total[1]}</strong></td>
     <td><strong>R$ ${total[2]}</strong></td>
+    <td></td>
   `
   return row
 }
@@ -33,6 +44,9 @@ export function createSaldoFinalRow(entradas, saidas) {
     <td><strong>R$ ${saldo[0]}</strong></td>
     <td><strong>R$ ${saldo[1]}</strong></td>
     <td><strong>R$ ${saldo[2]}</strong></td>
+    <td></td>
   `
   return row
 }
+
+

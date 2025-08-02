@@ -8,6 +8,7 @@ export function buildEntityTable() {
         <th>Mês Atual</th>
         <th>Próximo Mês</th>
         <th>+ Meses...</th>
+        <th>...</th>
       </tr>
     </thead>
   `

@@ -8,7 +8,7 @@ export function sumByMonth(items, offset = 0) {
     const itemMonth = `${itemDate.getFullYear()}-${String(itemDate.getMonth() + 1).padStart(2, '0')}`
     return itemMonth === refMonth
     })
-    .reduce((acc, curr) => acc + parseFloat(curr.value) * (curr.type === 'entrada' ? +1 : 1), 0)
+    .reduce((acc, curr) => acc + parseFloat(curr.value) * (curr.type === 'entrada' ? 1 : -1), 0)
     .toFixed(2)
 }
 

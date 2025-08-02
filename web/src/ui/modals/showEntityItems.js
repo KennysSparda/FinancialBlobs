@@ -1,4 +1,4 @@
-export function showModal(items) {
+export function showEntityItems(items) {
   const itemsList = document.getElementById('itemsList')
   itemsList.innerHTML = ''
   if (!items.length) {
