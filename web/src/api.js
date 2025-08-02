@@ -35,7 +35,17 @@ export const entityAPI = {
   update: (id, data) => request('PUT', `/entities/${id}`, data),
   remove: (id) => request('DELETE', `/entities/${id}`),
   generateNextMonth: (fromMonth) => request('POST', '/entities/generate-next-month', { fromMonth }),
-  getItems: (id) => request('GET', `/entities/${id}/items`)
+  getItems: (id) => request('GET', `/entities/${id}/items`),
+    listWithItems: async () => {
+    const entities = await entityAPI.list()
+    const withItems = await Promise.all(
+      entities.map(async (e) => {
+        const items = await entityAPI.getItems(e.id)
+        return { ...e, items }
+      })
+    )
+    return withItems
+  }
 }
 
 // Itens Financeiros
