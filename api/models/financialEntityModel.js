@@ -13,15 +13,15 @@ module.exports = {
 
   create: (data) => {
     return db.query(
-      'INSERT INTO financial_entities (name, description, month_ref) VALUES (?, ?, ?)',
-      [data.name, data.description, data.month_ref || null]
+      'INSERT INTO financial_entities (name, description) VALUES (?, ?)',
+      [data.name, data.description]
     )
   },
 
   update: (id, data) => {
     return db.query(
-      'UPDATE financial_entities SET name = ?, description = ?, month_ref = ? WHERE id = ?',
-      [data.name, data.description, data.month_ref, id]
+      'UPDATE financial_entities SET name = ?, description = ? WHERE id = ?',
+      [data.name, data.description, id]
     )
   },
 

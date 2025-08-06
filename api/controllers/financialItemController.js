@@ -2,6 +2,9 @@
 
 const FinancialItem = require('../models/financialItemModel')
 
+const FinancialItemService = require('../services/financialItemService')
+
+
 module.exports = {
   async list(req, res) {
     try {
@@ -28,33 +31,21 @@ module.exports = {
 
   async create(req, res) {
     try {
-      const {
-        entity_id,
-        description,
-        type,
-        value,
-        recurring,
-        installment_now,
-        installment_max
-      } = req.body
+      const item = req.body
 
-      const [result] = await FinancialItem.create({
-        entity_id,
-        description,
-        type,
-        value,
-        recurring,
-        installment_now,
-        installment_max
-      })
+      if (!item.entity_id || !item.description || !item.type || !item.value || !item.month_ref) {
+        return res.status(422).json({ error: 'Dados incompletos' })
+      }
 
-      res.status(201).location(`/api/v1/items/${result.insertId}`).json({
-        message: 'Item criado com sucesso',
-        id: result.insertId
+      const ids = await FinancialItemService.createWithRules(item)
+
+      res.status(201).json({
+        message: `${ids.length} item(ns) criado(s) com sucesso`,
+        ids
       })
     } catch (err) {
       console.error(err)
-      res.status(500).json({ error: 'Erro ao inserir item' })
+      res.status(500).json({ error: 'Erro ao inserir item(s)' })
     }
   },
 
@@ -66,7 +57,8 @@ module.exports = {
         value,
         recurring,
         installment_now,
-        installment_max
+        installment_max,
+        month_ref
       } = req.body
 
       await FinancialItem.update(req.params.id, {
@@ -75,7 +67,8 @@ module.exports = {
         value,
         recurring,
         installment_now,
-        installment_max
+        installment_max,
+        month_ref
       })
 
       res.status(200).json({ message: 'Item atualizado com sucesso' })
@@ -87,11 +80,25 @@ module.exports = {
 
   async remove(req, res) {
     try {
-      await FinancialItem.delete(req.params.id)
+      const [rows] = await FinancialItem.getById(req.params.id)
+      if (!rows.length) {
+        return res.status(404).json({ error: 'Item não encontrado' })
+      }
+
+      const item = rows[0]
+
+      // Se for item parcelado, apaga o grupo inteiro
+      if (item.installment_max > 1) {
+        await FinancialItem.deleteInstallmentGroup(item)
+      } else {
+        await FinancialItem.delete(req.params.id)
+      }
+
       res.status(204).send()
     } catch (err) {
       console.error(err)
       res.status(500).json({ error: 'Erro ao remover item' })
     }
   }
+
 }

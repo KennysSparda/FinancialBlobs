@@ -39,6 +39,10 @@ export function showItemModal({ entityId, item = null, onSave }) {
             <label class="form-label">Total de Parcelas</label>
             <input name="installment_max" type="number" class="form-control" value="${item?.installment_max || 0}">
           </div>
+          <div class="mb-3">
+            <label class="form-label">Mês de Referência</label>
+            <input name="month_ref" type="date" class="form-control" required value="${item?.month_ref?.split('T')[0] || ''}">
+          </div>
         </div>
         <div class="modal-footer">
           <button type="submit" class="btn btn-primary">Salvar</button>

@@ -6,7 +6,7 @@ export function renderNavbar({ onAddEntity }) {
 
   nav.innerHTML = `
     <div class="container-fluid">
-      <span class="navbar-brand">Gerenciador Financeiro</span>
+      <span class="navbar-brand">FinancialBlobs</span>
       <div class="d-flex">
         <button id="btnAddEntity" class="btn btn-primary">Nova Entidade</button>
       </div>

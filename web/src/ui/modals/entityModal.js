@@ -1,3 +1,4 @@
+// /src/ui/modals/entityModal.js
 import { entityAPI } from '../../api.js'
 
 export function showEntityModal(entity = null, onSave) {
@@ -19,10 +20,6 @@ export function showEntityModal(entity = null, onSave) {
           <div class="mb-3">
             <label class="form-label">Descrição</label>
             <textarea name="description" class="form-control">${entity?.description || ''}</textarea>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Mês de Referência</label>
-            <input name="month_ref" type="date" class="form-control" required value="${entity?.month_ref?.split('T')[0] || ''}">
           </div>
         </div>
         <div class="modal-footer">

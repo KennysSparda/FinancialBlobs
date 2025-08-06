@@ -8,13 +8,6 @@ export async function renderEntityTable() {
   const container = document.getElementById('entityTable')
   const entities = await entityAPI.listWithItems()
 
-  // Atribuir month_ref aos items
-  entities.forEach(ent => {
-    ent.items.forEach(item => {
-      item.month_ref = ent.month_ref
-    })
-  })
-
   const grouped = groupEntitiesByType(entities)
   const table = buildEntityTable()
 

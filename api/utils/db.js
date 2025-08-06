@@ -18,8 +18,7 @@ async function initDatabase() {
     CREATE TABLE IF NOT EXISTS financial_entities (
       id INT AUTO_INCREMENT PRIMARY KEY,
       name VARCHAR(100),
-      description TEXT,
-      month_ref DATE
+      description TEXT
     );
   `
 
@@ -32,7 +31,8 @@ async function initDatabase() {
       value DECIMAL(10, 2),
       recurring BOOLEAN DEFAULT 0,
       installment_now INT DEFAULT 0,
-      installment_max INT DEFAULT 0,
+      installment_max INT DEFAULT 0, 
+      month_ref DATE,
       FOREIGN KEY (entity_id) REFERENCES financial_entities(id) ON DELETE CASCADE
     );
   `

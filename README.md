@@ -22,7 +22,6 @@ O **FinancialBlobs** é uma aplicação que permite o controle de entidades fina
 | POST   | `/api/v1/entities`                        | Cria uma nova entidade                                   |
 | PUT    | `/api/v1/entities/:id`                    | Atualiza uma entidade existente                          |
 | DELETE | `/api/v1/entities/:id`                    | Remove uma entidade                                      |
-| POST   | `/api/v1/entities/generate-next-month`    | Gera os dados do próximo mês (recebe `{ fromMonth }`)   |
 
 ---
 
