@@ -1,9 +1,9 @@
 export function buildEntityTable() {
   const table = document.createElement('table')
-  table.className = 'table table-bordered table-sm align-middle '
+  table.className = 'table table-bordered table-sm align-middle table-striped'
 
   const thead = document.createElement('thead')
-  thead.className = 'table-dark'
+  thead.className = 'table-dark text-center'
 
   const headerRow = document.createElement('tr')
 

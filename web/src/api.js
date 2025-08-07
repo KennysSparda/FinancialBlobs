@@ -1,6 +1,6 @@
 // /web/model.js
 
-const API_BASE = 'http://localhost:3001/api/v1'
+const API_BASE = 'http://192.168.193.13:3001/api/v1'
 
 // Utilitários
 async function request(method, path, data) {
@@ -16,11 +16,10 @@ async function request(method, path, data) {
   const res = await fetch(`${API_BASE}${path}`, config)
 
   if (!res.ok) {
-    const text = await res.text() // tenta extrair erro mais claro
+    const text = await res.text()
     throw new Error(`Erro ${res.status}: ${text || res.statusText}`)
   }
 
-  // Alguns métodos (como DELETE 204) não retornam JSON
   if (res.status === 204) return null
 
   return res.json()

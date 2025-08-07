@@ -36,9 +36,11 @@ export function showEntityDetailsModal(entity, onUpdate) {
               <table class="table table-sm">
                 <thead>
                   <tr>
+                    <th>Mes</th>
                     <th>Descrição</th>
                     <th>Valor</th>
-                    <th>Mes</th>
+                    <th>Parc. Atual</th>
+                    <th>Parc. Total</th>
                     <th>Ações</th>
                   </tr>
                 </thead>
@@ -100,9 +102,11 @@ export function showEntityDetailsModal(entity, onUpdate) {
     for (const item of filteredItems) {
       const row = document.createElement('tr')
       row.innerHTML = `
+        <td>${item.month_ref.slice(0, 7)}</td>
         <td>${item.description}</td>
         <td>R$ ${parseFloat(item.value).toFixed(2)}</td>
-        <td>${item.month_ref.slice(0, 7)}</td>
+        <td>${item.installment_now}</td>
+        <td>${item.installment_max}</td>
         <td>
           <button class="btn btn-sm btn-link text-primary edit-item" data-id="${item.id}">Editar</button>
           <button class="btn btn-sm btn-link text-danger delete-item" data-id="${item.id}">Remover</button>

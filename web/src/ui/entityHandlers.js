@@ -1,6 +1,5 @@
 // /src/entityHandlers.js
 import { entityAPI } from '../api.js'
-// import { showEntityItems } from './modals/showEntityItems.js'
 import { showItemModal } from './modals/itemModal.js' 
 
 import { showEntityDetailsModal } from './modals/showEntityDetailsModal.js'

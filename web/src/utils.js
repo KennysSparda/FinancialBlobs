@@ -14,8 +14,6 @@ export function sumByMonth(items, offset = 0) {
     .toFixed(2)
 }
 
-
-
 export function groupEntitiesByType(entities) {
   const entradas = []
   const saidas = []
@@ -41,7 +39,6 @@ export function calculateTotals(entities, final = false) {
   return result.map(v => v.toFixed(2))
 }
 
-// Retorna o índice real do mês no ano baseado na posição da coluna
 export function getRotatedMonthIndex(columnIndex, startMonth = new Date().getMonth()) {
   return (startMonth + columnIndex) % 12
 }

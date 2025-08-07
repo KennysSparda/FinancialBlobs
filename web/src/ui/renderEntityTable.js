@@ -6,6 +6,8 @@ import { attachEntityClickHandlers } from './entityHandlers.js'
 
 export async function renderEntityTable() {
   const container = document.getElementById('entityTable')
+  container.classList.add('table-responsive')
+
   const entities = await entityAPI.listWithItems()
 
   const grouped = groupEntitiesByType(entities)

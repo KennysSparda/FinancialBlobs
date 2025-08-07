@@ -6,7 +6,9 @@ table {
 
 th, td {
     padding: 0.5rem 0.75rem;
-    text-align: right;
+    min-width: 120px;
+    text-align: center;
+    vertical-align: middle;
     border: none;
 }
 

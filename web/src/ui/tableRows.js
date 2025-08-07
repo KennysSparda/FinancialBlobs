@@ -9,7 +9,10 @@ export function createEntityRow(entity) {
 
   row.innerHTML = `
     <td>
-      <button class="btn btn-link p-0 view-entity" data-id="${entity.id}">
+      <button 
+        class="btn btn-link p-0 m-0 view-entity w-100 text-start"
+        data-id="${entity.id}"
+        title="${entity.description || ''}">
         ${entity.name}
       </button>
     </td>
