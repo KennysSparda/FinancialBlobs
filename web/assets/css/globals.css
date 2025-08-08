@@ -1,3 +1,14 @@
+.navbar, .navbar-brand {
+    padding-top: 0.2rem;
+    padding-bottom: 0.2rem;
+    font-size: 1.1rem;
+}
+
+body {
+  background-color: #161319;
+  color: #f9f3f6;
+}
+
 table {
     border-collapse: collapse;
     width: 100%;
@@ -5,8 +16,9 @@ table {
 }
 
 th, td {
-    padding: 0.5rem 0.75rem;
-    min-width: 120px;
+    padding: 0.18rem 0.38rem; /* Diminua o padding lateral e vertical */
+    min-width: 80px; /* Reduza a largura mínima das colunas */
+    font-size: 0.85rem; /* Fonte menor para dados */
     text-align: center;
     vertical-align: middle;
     border: none;
@@ -48,4 +60,17 @@ thead {
 
 .table-success {
     background-color: #e6ffed;
+}
+
+.btn-link, .btn-link:focus, .btn-link:active {
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+.table span, strong{
+  background: none !important;
+}
+#entityTable, .table {
+    font-size: 0.85rem;
 }

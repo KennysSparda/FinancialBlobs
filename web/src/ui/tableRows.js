@@ -3,13 +3,15 @@ import { sumByMonth, calculateTotals } from '../utils.js'
 
 export function createEntityRow(entity) {
   const row = document.createElement('tr')
+
+  row.classList.add('table-dark')
+
   const monthlyCells = Array.from({ length: 12 }, (_, i) =>
     `<td>${styledValue(sumByMonth(entity.items, i))}</td>`
   ).join('')
-
   row.innerHTML = `
     <td>
-      <button 
+      <button
         class="btn btn-link p-0 m-0 view-entity w-100 text-start"
         data-id="${entity.id}"
         title="${entity.description || ''}">
@@ -28,6 +30,7 @@ export function createTotalRow(tipo, list) {
   ).join('')
 
   const row = document.createElement('tr')
+  row.classList.add('table-dark', 'text-start')
   row.innerHTML = `<td><strong>Total de ${tipo}</strong></td>${monthlyCells}`
   return row
 }
@@ -39,6 +42,7 @@ export function createSaldoFinalRow(entradas, saidas) {
   ).join('')
 
   const row = document.createElement('tr')
+  row.classList.add('table-dark')
   row.innerHTML = `<td><strong>Saldo Final</strong></td>${monthlyCells}`
   return row
 }

@@ -2,7 +2,7 @@ import { showEntityModal } from './modals/entityModal.js'
 
 export function renderNavbar({ onAddEntity }) {
   const nav = document.createElement('nav')
-  nav.className = 'navbar navbar-expand-lg navbar-light bg-light mb-4'
+  nav.className = 'navbar navbar-expand-lg navbar-dark bg-dark mb-4'
 
   nav.innerHTML = `
     <div class="container-fluid">
