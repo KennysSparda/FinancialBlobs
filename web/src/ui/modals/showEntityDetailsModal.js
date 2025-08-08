@@ -74,25 +74,49 @@ export function showEntityDetailsModal(entity, onUpdate) {
 
     // Pega todos os itens apenas uma vez (cache local)
     if (!freshItems.length) {
+      // Salva o mês selecionado atualmente, se houver
+      const previousSelectedMonth = monthSelector.value
+
       freshItems = await entityAPI.getItems(entity.id)
+
       // Preencher seletor de meses
       monthSelector.innerHTML = ''
-      const uniqueMonths = [...new Set(freshItems.map(item => item.month_ref.slice(0, 7)))].sort().reverse()
+      const uniqueMonths = [...new Set(freshItems.map(item => item.month_ref.slice(0, 7)))].sort()
       for (const month of uniqueMonths) {
         const option = document.createElement('option')
         option.value = month
-        option.textContent = new Date(`${month}-01`).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })
+
+        const [year, monthNum] = month.split('-').map(Number)
+        const date = new Date(year, monthNum - 1)
+        option.textContent = date.toLocaleDateString('pt-BR', {
+          month: 'long',
+          year: 'numeric'
+        })
+
         monthSelector.appendChild(option)
       }
 
-      // Define mês atual como selecionado (padrão)
-      const currentMonth = new Date().toISOString().slice(0, 7)
-      
-      monthSelector.value = uniqueMonths.includes(currentMonth) ? currentMonth : uniqueMonths[0]
+      // Restaura mês anteriormente selecionado se ainda existir, senão define padrão
+      if (previousSelectedMonth && uniqueMonths.includes(previousSelectedMonth)) {
+        monthSelector.value = previousSelectedMonth
+      } else {
+        const currentMonth = new Date().toISOString().slice(0, 7)
+        monthSelector.value = uniqueMonths.includes(currentMonth) ? currentMonth : uniqueMonths[0]
+      }
     }
 
+
     const selectedMonth = monthSelector.value
-    const filteredItems = freshItems.filter(item => item.month_ref.startsWith(selectedMonth))
+    console.log(selectedMonth)
+    const filteredItems = freshItems
+      .filter(item => item.month_ref.startsWith(selectedMonth))
+      .sort((a, b) => {
+        // Itens parcelados primeiro
+        if (a.installment_max > 1 && b.installment_max <= 1) return -1
+        if (a.installment_max <= 1 && b.installment_max > 1) return 1
+        return 0 // mantém a ordem original se ambos forem do mesmo tipo
+      })
+
 
     if (!filteredItems.length) {
       body.innerHTML = `<tr><td colspan="4" class="text-muted">Nenhum item neste mês.</td></tr>`

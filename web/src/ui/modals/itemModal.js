@@ -1,7 +1,15 @@
+// itemModal.js
 import { itemAPI } from '../../api.js'
 
-export function showItemModal({ entityId, item = null, onSave }) {
+export function showItemModal({ entityId, item = null, onSave, defaultMonthRef = null }) {
+  const existingModal = document.getElementById('itemModal')
+  if (existingModal) {
+    bootstrap.Modal.getInstance(existingModal)?.hide()
+    existingModal.remove()
+  }
+
   const modalEl = document.createElement('div')
+  modalEl.id = 'itemModal'
   modalEl.className = 'modal fade'
   modalEl.tabIndex = -1
   modalEl.innerHTML = `
@@ -41,7 +49,10 @@ export function showItemModal({ entityId, item = null, onSave }) {
           </div>
           <div class="mb-3">
             <label class="form-label">Mês de Referência</label>
-            <input name="month_ref" type="date" class="form-control" required value="${item?.month_ref?.split('T')[0] || ''}">
+            <input name="month_ref" type="date" class="form-control" required value="${
+              item?.month_ref?.split('T')[0] ||
+              (defaultMonthRef ? defaultMonthRef + '-01' : '')
+            }">
           </div>
         </div>
         <div class="modal-footer">
