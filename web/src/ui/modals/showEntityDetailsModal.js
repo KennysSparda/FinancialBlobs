@@ -107,7 +107,6 @@ export function showEntityDetailsModal(entity, onUpdate) {
 
 
     const selectedMonth = monthSelector.value
-    console.log(selectedMonth)
     const filteredItems = freshItems
       .filter(item => item.month_ref.startsWith(selectedMonth))
       .sort((a, b) => {
@@ -128,7 +127,7 @@ export function showEntityDetailsModal(entity, onUpdate) {
       row.innerHTML = `
         <td>${item.month_ref.slice(0, 7)}</td>
         <td>${item.description}</td>
-        <td>R$ ${parseFloat(item.value).toFixed(2)}</td>
+        <td style="${item.type == 'entrada' ? 'color:#00aa00;' : 'color:#ff0000;'}">R$ ${parseFloat(item.value).toFixed(2)}</td>
         <td>${item.installment_now}</td>
         <td>${item.installment_max}</td>
         <td>
