@@ -1,5 +1,6 @@
 // /src/tableRows
-import { sumByMonth, calculateTotals } from '../utils.js'
+import { sumByMonth } from '../utils/sumByMonth.js'
+import { calculateTotals } from '../utils/calculateTotals.js'
 
 export function createEntityRow(entity) {
   const row = document.createElement('tr')

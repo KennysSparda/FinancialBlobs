@@ -14,7 +14,7 @@ export function showItemModal({ entityId, item = null, onSave, defaultMonthRef =
   modalEl.tabIndex = -1
   modalEl.innerHTML = `
     <div class="modal-dialog">
-      <form class="modal-content">
+      <form class="modal-content bg-dark text-light">
         <div class="modal-header">
           <h5 class="modal-title">${item ? 'Editar' : 'Novo'} Item</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -22,34 +22,34 @@ export function showItemModal({ entityId, item = null, onSave, defaultMonthRef =
         <div class="modal-body">
           <div class="mb-3">
             <label class="form-label">Descrição</label>
-            <textarea name="description" class="form-control" required>${item?.description || ''}</textarea>
+            <textarea name="description" class="form-control bg-dark text-light" required>${item?.description || ''}</textarea>
           </div>
           <div class="mb-3">
             <label class="form-label">Valor</label>
-            <input name="value" type="number" step="0.01" class="form-control" required value="${item?.value || ''}">
+            <input name="value" type="number" step="0.01" class="form-control bg-dark text-light" required value="${item?.value || ''}">
           </div>
           <div class="mb-3">
             <label class="form-label">Tipo</label>
-            <select name="type" class="form-select" required>
+            <select name="type" class="form-select bg-dark text-light2" required>
               <option value="entrada" ${item?.type === 'entrada' ? 'selected' : ''}>Entrada</option>
               <option value="saida" ${item?.type === 'saida' ? 'selected' : ''}>Saída</option>
             </select>
           </div>
           <div class="form-check mb-3">
-            <input name="recurring" class="form-check-input" type="checkbox" ${item?.recurring ? 'checked' : ''}>
+            <input name="recurring" class="form-check-input bg-dark text-light" type="checkbox" ${item?.recurring ? 'checked' : ''}>
             <label class="form-check-label">Recorrente</label>
           </div>
           <div class="mb-3">
             <label class="form-label">Parcela Atual</label>
-            <input name="installment_now" type="number" class="form-control" value="${item?.installment_now || 0}">
+            <input name="installment_now" type="number" class="form-control bg-dark text-light" value="${item?.installment_now || 0}">
           </div>
           <div class="mb-3">
             <label class="form-label">Total de Parcelas</label>
-            <input name="installment_max" type="number" class="form-control" value="${item?.installment_max || 0}">
+            <input name="installment_max" type="number" class="form-control bg-dark text-light" value="${item?.installment_max || 0}">
           </div>
           <div class="mb-3">
             <label class="form-label">Mês de Referência</label>
-            <input name="month_ref" type="date" class="form-control" required value="${
+            <input name="month_ref" type="date" class="form-control bg-dark text-light" required value="${
               item?.month_ref?.split('T')[0] ||
               (defaultMonthRef ? defaultMonthRef + '-01' : '')
             }">

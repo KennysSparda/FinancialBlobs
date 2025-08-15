@@ -7,7 +7,7 @@ export function showEntityModal(entity = null, onSave) {
   modalEl.tabIndex = -1
   modalEl.innerHTML = `
     <div class="modal-dialog">
-      <form class="modal-content">
+      <form class="modal-content bg-dark text-light">
         <div class="modal-header">
           <h5 class="modal-title">${entity ? 'Editar' : 'Nova'} Entidade</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -15,11 +15,11 @@ export function showEntityModal(entity = null, onSave) {
         <div class="modal-body">
           <div class="mb-3">
             <label class="form-label">Nome</label>
-            <input name="name" type="text" class="form-control" required value="${entity?.name || ''}">
+            <input name="name" type="text" class="form-control bg-dark text-light" required value="${entity?.name || ''}">
           </div>
           <div class="mb-3">
             <label class="form-label">Descrição</label>
-            <textarea name="description" class="form-control">${entity?.description || ''}</textarea>
+            <textarea name="description" class="form-control bg-dark text-light">${entity?.description || ''}</textarea>
           </div>
         </div>
         <div class="modal-footer">

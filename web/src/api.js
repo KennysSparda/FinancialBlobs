@@ -1,6 +1,6 @@
 // /web/model.js
 
-const API_BASE = 'http://192.168.193.13:3001/api/v1'
+const API_BASE = 'http://localhost:3001/api/v1'
 
 // Utilitários
 async function request(method, path, data) {

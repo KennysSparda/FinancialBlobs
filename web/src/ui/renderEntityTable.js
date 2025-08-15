@@ -1,5 +1,5 @@
 import { entityAPI } from '../api.js'
-import { groupEntitiesByType } from '../utils.js'
+import { groupEntitiesByType } from '../utils/groupEntitiesByType.js'
 import { buildEntityTable } from './tableRenderer.js'
 import { createEntityRow, createTotalRow, createSaldoFinalRow } from './tableRows.js'
 import { attachEntityClickHandlers } from './entityHandlers.js'

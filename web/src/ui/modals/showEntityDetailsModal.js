@@ -6,21 +6,22 @@ export function showEntityDetailsModal(entity, onUpdate) {
 
   modalEl.innerHTML = `
     <div class="modal-dialog modal-lg modal-dialog-scrollable">
-      <div class="modal-content">
-        <div class="modal-header">
+      <div class="modal-content bg-dark text-light">
+        <div class="modal-header border-secondary">
+
           <h5 class="modal-title">${entity.name}</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
 
-        <div class="modal-body">
-          <p class="text-muted">${entity.description || 'Sem descrição'}</p>
+        <div class="modal-body text-light">
+          <p class="text-light">${entity.description || 'Sem descrição'}</p>
 
           <ul class="nav nav-tabs" id="entityTab" role="tablist">
             <li class="nav-item" role="presentation">
-              <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-items" type="button">Itens</button>
+              <button class="nav-link bg-dark text-light active" data-bs-toggle="tab" data-bs-target="#tab-items" type="button">Itens</button>
             </li>
             <li class="nav-item" role="presentation">
-              <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-config" type="button">Configurações</button>
+              <button class="nav-link bg-dark text-light" data-bs-toggle="tab" data-bs-target="#tab-config" type="button">Configurações</button>
             </li>
           </ul>
 
@@ -29,11 +30,11 @@ export function showEntityDetailsModal(entity, onUpdate) {
               <div class="mb-2 d-flex justify-content-between align-items-center">
                 <label class="form-label mb-0">
                   Mês de referência:
-                  <select class="form-select form-select-sm d-inline w-auto" id="monthSelector"></select>
+                  <select class="form-select form-select-sm d-inline w-auto bg-dark text-light" id="monthSelector"></select>
                 </label>
               </div>
 
-              <table class="table table-sm">
+              <table class="table table-sm table-dark">
                 <thead>
                   <tr>
                     <th>Mes</th>

@@ -1,9 +1,7 @@
 // /api/controllers/financialItemController.js
 
 const FinancialItem = require('../models/financialItemModel')
-
 const FinancialItemService = require('../services/financialItemService')
-
 
 module.exports = {
   async list(req, res) {
