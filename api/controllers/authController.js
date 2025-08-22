@@ -1,7 +1,7 @@
 // /api/controllers/authController.js
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const User = require('../models/userModel')
+const User = require('../models/financialUserModel')
 
 function signToken(userId) {
   return jwt.sign({}, process.env.JWT_SECRET, {
@@ -103,16 +103,7 @@ module.exports = {
         return res.status(422).json({ error: 'current_password e new_password são obrigatórios' })
       }
 
-      const [rows] = await User.findByEmail(req.userEmail || '') // fallback caso queira guardar email no token
-      const [me] = await User.findById(req.userId)
-      if (!me) return res.status(404).json({ error: 'usuário não encontrado' })
-
-      // precisamos do hash atual: busca por email ou adiciona um método findSecretById
-      const [secretRows] = await require('../utils/db').query(
-        'SELECT password_hash FROM users WHERE id = ?',
-        [req.userId]
-      )
-
+      const [secretRows] = await User.findSecretById(req.userId)
       if (!secretRows.length) return res.status(404).json({ error: 'usuário não encontrado' })
 
       const ok = await bcrypt.compare(current_password, secretRows[0].password_hash)
