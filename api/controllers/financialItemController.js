@@ -1,12 +1,12 @@
 // /api/controllers/financialItemController.js
-
 const FinancialItem = require('../models/financialItemModel')
+const FinancialEntity = require('../models/financialEntityModel')
 const FinancialItemService = require('../services/financialItemService')
 
 module.exports = {
   async list(req, res) {
     try {
-      const [rows] = await FinancialItem.getAll()
+      const [rows] = await FinancialItem.listAllByUserId(req.userId)
       res.status(200).json(rows)
     } catch (err) {
       console.error(err)
@@ -16,10 +16,8 @@ module.exports = {
 
   async get(req, res) {
     try {
-      const [rows] = await FinancialItem.getById(req.params.id)
-      if (!rows.length) {
-        return res.status(404).json({ error: 'Item não encontrado' })
-      }
+      const [rows] = await FinancialItem.getOwnedById(req.params.id, req.userId)
+      if (!rows.length) return res.status(404).json({ error: 'Item não encontrado' })
       res.status(200).json(rows[0])
     } catch (err) {
       console.error(err)
@@ -35,7 +33,12 @@ module.exports = {
         return res.status(422).json({ error: 'Dados incompletos' })
       }
 
-      const ids = await FinancialItemService.createWithRules(item)
+      // valida posse da entidade aqui também (camada extra)
+      const [ent] = await FinancialEntity.getOwnedById(item.entity_id, req.userId)
+      if (!ent.length) return res.status(404).json({ error: 'Entidade não encontrada' })
+
+      // chama service passando userId
+      const ids = await FinancialItemService.createWithRules(item, req.userId)
 
       res.status(201).json({
         message: `${ids.length} item(ns) criado(s) com sucesso`,
@@ -43,12 +46,14 @@ module.exports = {
       })
     } catch (err) {
       console.error(err)
-      res.status(500).json({ error: 'Erro ao inserir item(s)' })
+      const status = err.status || 500
+      res.status(status).json({ error: err.message || 'Erro ao inserir item(s)' })
     }
   },
 
   async update(req, res) {
     try {
+      const id = Number(req.params.id)
       const {
         description,
         type,
@@ -59,7 +64,7 @@ module.exports = {
         month_ref
       } = req.body
 
-      await FinancialItem.update(req.params.id, {
+      const [result] = await FinancialItem.updateOwned(id, req.userId, {
         description,
         type,
         value,
@@ -69,6 +74,7 @@ module.exports = {
         month_ref
       })
 
+      if (result.affectedRows === 0) return res.status(404).json({ error: 'Item não encontrado' })
       res.status(200).json({ message: 'Item atualizado com sucesso' })
     } catch (err) {
       console.error(err)
@@ -78,18 +84,18 @@ module.exports = {
 
   async remove(req, res) {
     try {
-      const [rows] = await FinancialItem.getById(req.params.id)
-      if (!rows.length) {
-        return res.status(404).json({ error: 'Item não encontrado' })
-      }
+      const id = Number(req.params.id)
 
+      // busca owned pra saber se é parcelado e também garantir posse
+      const [rows] = await FinancialItem.getOwnedById(id, req.userId)
+      if (!rows.length) return res.status(404).json({ error: 'Item não encontrado' })
       const item = rows[0]
 
-      // Se for item parcelado, apaga o grupo inteiro
       if (item.installment_max > 1) {
-        await FinancialItem.deleteInstallmentGroup(item)
+        await FinancialItem.deleteInstallmentGroupOwnedByItemId(id, req.userId)
       } else {
-        await FinancialItem.delete(req.params.id)
+        const [result] = await FinancialItem.deleteOwned(id, req.userId)
+        if (result.affectedRows === 0) return res.status(404).json({ error: 'Item não encontrado' })
       }
 
       res.status(204).send()
@@ -98,5 +104,4 @@ module.exports = {
       res.status(500).json({ error: 'Erro ao remover item' })
     }
   }
-
 }

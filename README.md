@@ -62,3 +62,15 @@ Para testar os endpoints:
 - MySQL (com usuario configurado e banco de dados criado as tabelas são inseridas automaticamente )
 
 - Navegador web para acessar a interface (front-end simples incluído)
+
+
+## Atualizando o banco para nova versao:
+```sql
+ALTER TABLE financial_entities ADD COLUMN user_id INT NULL;
+UPDATE financial_entities SET user_id = 1 WHERE user_id IS NULL;
+ALTER TABLE financial_entities MODIFY user_id INT NOT NULL;
+ALTER TABLE financial_entities ADD CONSTRAINT fk_entities_user
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
+CREATE INDEX idx_entities_user_id ON financial_entities(user_id);
+
+```

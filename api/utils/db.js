@@ -1,5 +1,4 @@
 // /api/utils/db.js
-
 const mysql = require('mysql2/promise')
 
 const pool = mysql.createPool({
@@ -12,14 +11,26 @@ const pool = mysql.createPool({
   queueLimit: 0
 })
 
-// Cria as tabelas se não existirem
 async function initDatabase() {
+  const createUsersTable = `
+    CREATE TABLE IF NOT EXISTS users (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      name VARCHAR(100) NOT NULL,
+      email VARCHAR(150) NOT NULL UNIQUE,
+      password_hash VARCHAR(255) NOT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+  `
+
   const createEntitiesTable = `
     CREATE TABLE IF NOT EXISTS financial_entities (
       id INT AUTO_INCREMENT PRIMARY KEY,
+      user_id INT NOT NULL,
       name VARCHAR(100),
-      description TEXT
-    );
+      description TEXT,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+      INDEX idx_entities_user_id (user_id)
+    )
   `
 
   const createItemsTable = `
@@ -33,12 +44,15 @@ async function initDatabase() {
       installment_now INT DEFAULT 0,
       installment_max INT DEFAULT 0, 
       month_ref DATE,
-      FOREIGN KEY (entity_id) REFERENCES financial_entities(id) ON DELETE CASCADE
-    );
+      FOREIGN KEY (entity_id) REFERENCES financial_entities(id) ON DELETE CASCADE,
+      INDEX idx_items_entity_id (entity_id),
+      INDEX idx_items_month_ref (month_ref)
+    )
   `
 
   const conn = await pool.getConnection()
   try {
+    await conn.query(createUsersTable)
     await conn.query(createEntitiesTable)
     await conn.query(createItemsTable)
     console.log('Tabelas verificadas/criadas com sucesso.')
@@ -48,7 +62,6 @@ async function initDatabase() {
     conn.release()
   }
 }
-
 
 initDatabase()
 
