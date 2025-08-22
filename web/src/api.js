@@ -1,32 +1,50 @@
-// /web/model.js
+// src/api.js
+
+import { getToken, clearToken } from './auth.js'
 
 const API_BASE = 'http://localhost:3001/api/v1'
 
-// Utilitários
 async function request(method, path, data) {
-  const config = {
-    method,
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  }
+  const headers = { 'Content-Type': 'application/json' }
+  const token = getToken()
+  if (token) headers.Authorization = `Bearer ${token}`
 
+  const config = { method, headers }
   if (data) config.body = JSON.stringify(data)
 
   const res = await fetch(`${API_BASE}${path}`, config)
 
+  // intercepta 401 para que o app possa abrir modal de login
+  if (res.status === 401) {
+    // opcional: limpar token inválido
+    clearToken()
+    const text = await res.text().catch(() => '')
+    const err = new Error(`Unauthorized: ${text || '401'}`)
+    err.status = 401
+    throw err
+  }
+
   if (!res.ok) {
-    const text = await res.text()
-    throw new Error(`Erro ${res.status}: ${text || res.statusText}`)
+    const text = await res.text().catch(() => '')
+    const err = new Error(`Erro ${res.status}: ${text || res.statusText}`)
+    err.status = res.status
+    throw err
   }
 
   if (res.status === 204) return null
-
   return res.json()
-
 }
 
-// Entidades Financeiras
+// Auth
+export const authAPI = {
+  register: (payload) => request('POST', '/auth/register', payload),
+  login: (payload) => request('POST', '/auth/login', payload),
+  me: () => request('GET', '/auth/me'),
+  updateMe: (payload) => request('PUT', '/auth/me', payload),
+  changePassword: (payload) => request('PUT', '/auth/me/password', payload)
+}
+
+// Entidades
 export const entityAPI = {
   list: () => request('GET', '/entities'),
   get: (id) => request('GET', `/entities/${id}`),
@@ -37,7 +55,7 @@ export const entityAPI = {
   listWithItems: async () => {
     const entities = await entityAPI.list()
     const withItems = await Promise.all(
-      entities.map(async (e) => {
+      entities.map(async e => {
         const items = await entityAPI.getItems(e.id)
         return { ...e, items }
       })
@@ -46,7 +64,7 @@ export const entityAPI = {
   }
 }
 
-// Itens Financeiros
+// Itens
 export const itemAPI = {
   list: () => request('GET', '/items'),
   get: (id) => request('GET', `/items/${id}`),
