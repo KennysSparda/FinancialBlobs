@@ -20,7 +20,7 @@ export function initDateFilter({ mountEl, items, onChange }) {
           <button class="btn btn-sm btn-outline-secondary" id="btnClearMonth">Limpar</button>
         </div>
 
-        <div class="d-flex align-items-center gap-2" id="blockRange" style="display:none">
+        <div class="d-flex align-items-center gap-2" id="blockRange">
           <label class="form-label mb-0">De</label>
           <select id="selStart" class="form-select form-select-sm" style="width:auto"></select>
           <label class="form-label mb-0">Até</label>
@@ -46,8 +46,8 @@ export function initDateFilter({ mountEl, items, onChange }) {
   // inicia no modo "Mês" e já define o valor padrão
   state.mode = 'month'
   state.ym = lastYM
-  blockMonth.style.display = ''
-  blockRange.style.display = 'none'
+  blockMonth.classList.remove('d-none')
+  blockRange.classList.add('d-none')
   emit()
 
   // alternância mês ↔ período
@@ -57,8 +57,8 @@ export function initDateFilter({ mountEl, items, onChange }) {
     btnModeMonth.classList.remove('btn-outline-primary')
     btnModeRange.classList.remove('btn-primary')
     btnModeRange.classList.add('btn-outline-primary')
-    blockMonth.style.display = ''
-    blockRange.style.display = 'none'
+    blockMonth.classList.remove('d-none')
+    blockRange.classList.add('d-none')
     emit()
   }
 
@@ -68,8 +68,8 @@ export function initDateFilter({ mountEl, items, onChange }) {
     btnModeRange.classList.remove('btn-outline-primary')
     btnModeMonth.classList.remove('btn-primary')
     btnModeMonth.classList.add('btn-outline-primary')
-    blockMonth.style.display = 'none'
-    blockRange.style.display = ''
+    blockMonth.classList.add('d-none')
+    blockRange.classList.remove('d-none')
     emit()
   }
 

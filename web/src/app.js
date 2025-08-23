@@ -8,20 +8,34 @@ import { renderLanding } from './ui/landing.js'
 
 applyTheme()
 
+let routerReady = false
+
 async function handleAuthChanged(loggedIn) {
   await renderNavbar({ onAddEntity: refresh, onAuthChanged: handleAuthChanged })
-  if (loggedIn) refresh()
-  else renderLanding()
+  if (loggedIn) {
+    ensureRouter()
+    route()
+  } else {
+    renderLanding()
+  }
 }
 
 async function boot() {
   await renderNavbar({ onAddEntity: refresh, onAuthChanged: handleAuthChanged })
+
   if (!isAuthenticated()) {
     renderLanding()
     return
   }
-  window.addEventListener('hashchange', route)
+
+  ensureRouter()
   route()
+}
+
+function ensureRouter() {
+  if (routerReady) return
+  window.addEventListener('hashchange', route)
+  routerReady = true
 }
 
 function route() {
@@ -34,7 +48,7 @@ function route() {
     toggleSearch(false)
   } else {
     renderEntityTable()
-    toggleSearch(false)
+    toggleSearch(true)
   }
 
   window.dispatchEvent(new CustomEvent('fb:nav:update'))
@@ -50,6 +64,7 @@ function refresh() {
     renderLanding()
     return
   }
+  ensureRouter()
   route()
 }
 
