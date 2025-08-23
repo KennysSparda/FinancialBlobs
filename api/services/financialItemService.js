@@ -16,7 +16,7 @@ async function createWithRules(itemData, userId) {
   } = itemData
 
   // 1) valida ownership da entidade
-  const [entRows] = await FinancialEntity.getByIdOwned(entity_id, userId)
+  const [entRows] = await FinancialEntity.getOwnedById(entity_id, userId)
   if (!entRows.length) {
     const e = new Error('Entidade não encontrada para este usuário')
     e.status = 404

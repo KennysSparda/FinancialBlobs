@@ -73,6 +73,9 @@ module.exports = {
   async update(req, res) {
     try {
       const id = Number(req.params.id)
+      if (!Number.isInteger(id)) {
+        return res.status(400).json({ error: 'ID inválido' })
+      }
       const {
         description,
         type,
@@ -104,6 +107,9 @@ module.exports = {
   async remove(req, res) {
     try {
       const id = Number(req.params.id)
+      if (!Number.isInteger(id)) {
+        return res.status(400).json({ error: 'ID inválido' })
+      }
 
       // busca owned pra saber se é parcelado e também garantir posse
       const [rows] = await FinancialItem.getOwnedById(id, req.userId)
