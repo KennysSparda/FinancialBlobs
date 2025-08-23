@@ -1,7 +1,7 @@
 // /src/entityHandlers.js
 import { entityAPI } from '../api.js'
 
-import { showEntityDetailsModal } from './modals/entityDetails.js'
+import { showEntityDetailsModal } from './modals/entityDetails/index.js'
 
 export function attachEntityClickHandlers() {
   document.querySelectorAll('.view-entity').forEach(btn => {

@@ -1,6 +1,6 @@
-import { buildEntityDetailsModal } from './entityDetails/build.js'
-import { initItemsSection } from './entityDetails/items.js'
-import { initConfigSection } from './entityDetails/config.js'
+import { buildEntityDetailsModal } from './build.js'
+import { initItemsSection } from './items.js'
+import { initConfigSection } from './config.js'
 
 export function showEntityDetailsModal(entity, onUpdate) {
   const { modalEl } = buildEntityDetailsModal(entity)
