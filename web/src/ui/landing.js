@@ -14,7 +14,7 @@ const modalImagesDefault = [
 ]
 
 export function renderLanding({ heroImages = heroImagesDefault, modals = modalImagesDefault } = {}) {
-  const root = document.getElementById('entityTable')
+  const root = document.getElementById('app')
   if (!root) return
 
   root.innerHTML = `
