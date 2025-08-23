@@ -121,4 +121,27 @@ async function createWithRules(itemData, userId) {
   }
 }
 
-module.exports = { createWithRules }
+async function deleteItemsByEntityAndMonth(entityId, year, month) {
+  // normaliza para primeiro e último dia do mês
+  const start = new Date(Date.UTC(year, month - 1, 1, 0, 0, 0))
+  const end = new Date(Date.UTC(year, month, 0, 23, 59, 59))
+
+  // supondo coluna: entity_id, date (datetime ou date)
+  const { rowCount } = await db.query(
+    'DELETE FROM items WHERE entity_id = $1 AND date >= $2 AND date <= $3',
+    [entityId, start, end]
+  )
+
+  return rowCount ?? 0
+}
+
+async function deleteItemsByEntity(entityId) {
+  const { rowCount } = await db.query(
+    'DELETE FROM items WHERE entity_id = $1',
+    [entityId]
+  )
+
+  return rowCount ?? 0
+}
+
+module.exports = { createWithRules , deleteItemsByEntityAndMonth, deleteItemsByEntity}

@@ -78,5 +78,36 @@ module.exports = {
       console.error('[ERRO] Falha ao buscar itens:', err)
       res.status(500).json({ error: 'Erro ao buscar itens da entidade' })
     }
+  },
+
+  async clearEntityByMonth(req, res) {
+    try {
+      const { id } = req.params
+      const year = parseInt(req.query.year, 10)
+      const month = parseInt(req.query.month, 10)
+
+      if (!id || Number.isNaN(year) || Number.isNaN(month) || month < 1 || month > 12) {
+        return res.status(400).json({ error: 'Parâmetros inválidos: id, year, month' })
+      }
+
+      const count = await deleteItemsByEntityAndMonth(id, year, month)
+      res.json({ ok: true, removed: count })
+    } catch (err) {
+      console.error('clearEntityByMonth', err)
+      res.status(500).json({ error: 'Falha ao limpar itens do mês' })
+    }
+  },
+
+  async clearEntityAll(req, res) {
+    try {
+      const { id } = req.params
+      if (!id) return res.status(400).json({ error: 'Parâmetro id é obrigatório' })
+
+      const count = await deleteItemsByEntity(id)
+      res.json({ ok: true, removed: count })
+    } catch (err) {
+      console.error('clearEntityAll', err)
+      res.status(500).json({ error: 'Falha ao limpar todos os itens da entidade' })
+    }
   }
 }

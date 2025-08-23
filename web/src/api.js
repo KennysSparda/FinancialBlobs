@@ -78,3 +78,17 @@ export const itemAPI = {
     return request('DELETE', `/items/${id}?scope=${scope}`)
   }
 }
+
+export async function apiClearEntityMonth(entityId, { year, month }) {
+  const url = `${API_BASE}/entities/${entityId}/clear?year=${year}&month=${month}`
+  const res = await fetch(url, { method: 'DELETE' })
+  if (!res.ok) throw new Error('Falha ao limpar mês selecionado')
+  return res.json()
+}
+
+export async function apiClearEntityAll(entityId) {
+  const url = `${API_BASE}/entities/${entityId}/clear-all`
+  const res = await fetch(url, { method: 'DELETE' })
+  if (!res.ok) throw new Error('Falha ao limpar todos os itens')
+  return res.json()
+}
