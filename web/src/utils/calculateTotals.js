@@ -1,15 +1,16 @@
-import { sumByMonth } from "./sumByMonth.js"
+import { sumByMonth } from './sumByMonth.js'
 
-export function calculateTotals(entities, final = false) {
+export function calculateTotals(entities) {
   const monthsToShow = 12
   const result = new Array(monthsToShow).fill(0)
 
-  entities.forEach(ent => {
+  const list = Array.isArray(entities) ? entities : []
+  list.forEach(ent => {
+    const items = ent?.items || []
     for (let i = 0; i < monthsToShow; i++) {
-      const valor = sumByMonth(ent.items, i)
-      result[i] += parseFloat(valor)
+      result[i] += Number(sumByMonth(items, i) || 0)
     }
   })
 
-  return result.map(v => v.toFixed(2))
+  return result // <- números
 }

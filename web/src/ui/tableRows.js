@@ -1,4 +1,5 @@
 import { sumByMonth } from '../utils/sumByMonth.js'
+import { calculateTotals } from '../utils/calculateTotals.js'
 
 // ===== linhas da TABELA CONGELADA (só 1ª coluna) =====
 export function frozenEntityRow(entity) {
@@ -36,34 +37,30 @@ export function frozenSaldoRow() {
 export function mainEntityRow(entity) {
   const tr = document.createElement('tr')
   tr.innerHTML = Array.from({ length: 12 }, (_, i) =>
-    `<td>${styledValue(sumByMonth(entity.items, i))}</td>`
+    `<td>${styledValue(sumByMonth(entity?.items || [], i))}</td>`
   ).join('')
   return tr
 }
 
 export function mainTotalRow(list) {
-  const totals = totalsByMonth(list)
+  const totals = calculateTotals(list)
   const tr = document.createElement('tr')
   tr.innerHTML = totals.map(v => `<td><strong>${styledValue(v)}</strong></td>`).join('')
   return tr
 }
 
 export function mainSaldoRow(entradas, saidas) {
-  const e = totalsByMonth(entradas)
-  const s = totalsByMonth(saidas)
-  const saldo = e.map((v, i) => v - s[i])
+  const e = calculateTotals(entradas)      // ex.: [2500, 0, ...]
+  const s = calculateTotals(saidas)        // ex.: [-431.35, -239.52, ...]
+
+  // saldo mês a mês = entradas + saídas (saídas já vêm negativas)
+  const saldo = e.map((v, i) => Number(v) + Number(s[i] || 0))
 
   const tr = document.createElement('tr')
   tr.innerHTML = saldo.map(v => `<td><strong>${styledValue(v)}</strong></td>`).join('')
   return tr
 }
 
-// util: soma por mês para lista de entidades
-function totalsByMonth(list) {
-  return Array.from({ length: 12 }, (_, i) =>
-    list.reduce((acc, e) => acc + sumByMonth(e.items, i), 0)
-  )
-}
 
 // moeda com símbolo responsivo
 function styledValue(value) {
