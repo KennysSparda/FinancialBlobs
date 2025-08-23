@@ -1,0 +1,119 @@
+/* Navbar clean estilo tabnews */
+.fb-navbar{
+  background: var(--fb-nav-bg);
+  color: var(--fb-nav-fg);
+  border-bottom: 1px solid var(--fb-border);
+  min-height: 56px
+}
+.fb-navbar .container-fluid{
+  gap: .75rem;
+  display: grid;
+  grid-template-columns: auto 1fr auto; /* brand | search | actions */
+  align-items: center
+}
+
+/* Marca */
+.fb-nav__brand{
+  font-weight: 800;
+  letter-spacing: .2px;
+  color: var(--fb-nav-fg) !important;
+  text-decoration: none
+}
+.fb-nav__brand:hover{ opacity: .9 }
+[data-bs-theme="dark"] .fb-nav__brand{ text-shadow: 0 0 6px rgba(0,240,255,.25) }
+
+/* ===== Busca central ===== */
+.fb-searchbox{
+  max-width: 640px;
+  margin: 0 auto;
+  width: 100%;
+  position: relative
+}
+.fb-searchbox .fb-search{
+  width: 100%;
+  padding: .6rem 1rem .6rem 2.4rem;
+  border-radius: 999px;
+  border: 1px solid var(--fb-border);
+  background: var(--fb-surface);
+  color: var(--fb-ink);
+  font-size: var(--fs-compact)
+}
+.fb-searchbox .fb-search::placeholder{ color: var(--fb-muted) }
+.fb-searchbox .fb-search-icon{
+  position: absolute;
+  left: .75rem; top: 50%; transform: translateY(-50%);
+  pointer-events: none; opacity: .75
+}
+
+/* ===== Ações à direita ===== */
+.fb-nav__actions{
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: .5rem
+}
+.fb-me{ font-size: var(--fs-compact); color: var(--fb-muted) }
+
+/* Botão icônico */
+.fb-iconbtn{
+  width: 36px; height: 36px; padding: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 10px; border: 1px solid transparent;
+  background: transparent; color: var(--fb-nav-fg);
+  line-height: 1
+}
+.fb-iconbtn:hover{ border-color: var(--fb-border); background: rgba(0,0,0,.02) }
+[data-bs-theme="dark"] .fb-iconbtn:hover{ background: rgba(255,255,255,.05) }
+.fb-iconbtn:focus-visible{ outline: 2px solid var(--bs-primary); outline-offset: 2px }
+
+/* Menu chamativo */
+.fb-menu-btn.is-primary{
+  background: linear-gradient(135deg, var(--tone-primary-weak), transparent);
+  border-color: var(--tone-primary-bd)
+}
+
+/* Dropdown do menu */
+.fb-nav-dropdown{
+  --bs-dropdown-bg: var(--fb-surface);
+  --bs-dropdown-color: var(--fb-ink);
+  --bs-dropdown-border-color: var(--fb-border);
+  --bs-dropdown-link-hover-bg: rgba(0,0,0,.03)
+}
+[data-bs-theme="dark"] .fb-nav-dropdown{
+  --bs-dropdown-link-hover-bg: rgba(255,255,255,.06)
+}
+
+/* ===== Switch de tema (🌙 | Auto | ☀️) ===== */
+.fb-theme-segment{
+  display: inline-flex;
+  border-radius: 999px;
+  border: 1px solid var(--fb-border);
+  background: var(--fb-surface);
+  padding: .2rem
+}
+.fb-theme-segment .seg{
+  min-width: 64px;
+  padding: .35rem .75rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--fb-ink);
+  font-size: var(--fs-compact)
+}
+.fb-theme-segment .seg.active{
+  background: var(--tone-primary-weak);
+  border-color: var(--tone-primary-bd);
+  color: var(--bs-primary);
+  font-weight: 700
+}
+
+/* Responsivo */
+@media (max-width: 768px){
+  .fb-navbar .container-fluid{
+    grid-template-columns: auto 1fr auto
+  }
+  .fb-searchbox{ max-width: 460px }
+}
+@media (max-width: 576px){
+  .fb-searchbox{ display: none } /* some no mobile pequeno, como no tabnews */
+}
