@@ -2,7 +2,7 @@
 
 import { getToken, clearToken } from './auth.js'
 
-const API_BASE = 'http://localhost:3001/api/v1'
+const API_BASE = 'http://192.168.193.1:3001/api/v1'
 
 async function request(method, path, data) {
   const headers = { 'Content-Type': 'application/json' }

@@ -1,6 +1,6 @@
 export function buildEntityTable() {
   const table = document.createElement('table')
-  table.className = 'table table-bordered table-sm align-middle table-striped'
+  table.className = 'table table-sm align-middle w-100'
 
   const thead = document.createElement('thead')
   thead.className = 'table-dark text-center'

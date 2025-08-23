@@ -21,7 +21,13 @@ export async function renderEntityTable() {
   table.appendChild(createSaldoFinalRow(grouped.entradas, grouped.saidas))
 
   container.innerHTML = ''
-  container.appendChild(table)
+  const panel = document.createElement('div')
+  panel.className = 'fb-board'
+  const scroll = document.createElement('div')
+  scroll.className = 'fb-scroll'
+  scroll.appendChild(table)
+  panel.appendChild(scroll)
+  container.appendChild(panel)
 
   attachEntityClickHandlers()
 }

@@ -30,9 +30,9 @@ export function showItemModal({ entityId, item = null, onSave, defaultMonthRef =
           </div>
           <div class="mb-3">
             <label class="form-label">Tipo</label>
-            <select name="type" class="form-select bg-dark text-light2" required>
-              <option value="entrada" ${item?.type === 'entrada' ? 'selected' : ''}>Entrada</option>
-              <option value="saida" ${item?.type === 'saida' ? 'selected' : ''}>Saída</option>
+            <select name="type" class="form-select bg-dark text-light" required>
+              <option class="text-light" value="entrada" ${item?.type === 'entrada' ? 'selected' : ''}>Entrada</option>
+              <option class="text-light" value="saida" ${item?.type === 'saida' ? 'selected' : ''}>Saída</option>
             </select>
           </div>
           <div class="form-check mb-3">

@@ -3,6 +3,9 @@ import { renderNavbar } from './ui/navbar.js'
 import { renderEntityTable } from './ui/renderEntityTable.js'
 import { isAuthenticated } from './auth.js'
 import { openAuthModal } from './ui/modals/authModal.js'
+import { applyTheme } from './theme.js'
+
+applyTheme()
 
 async function handleAuthChanged(loggedIn) {
   await renderNavbar({ onAddEntity: refresh, onAuthChanged: handleAuthChanged })

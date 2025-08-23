@@ -5,8 +5,6 @@ import { calculateTotals } from '../utils/calculateTotals.js'
 export function createEntityRow(entity) {
   const row = document.createElement('tr')
 
-  row.classList.add('table-dark')
-
   const monthlyCells = Array.from({ length: 12 }, (_, i) =>
     `<td>${styledValue(sumByMonth(entity.items, i))}</td>`
   ).join('')
@@ -31,7 +29,7 @@ export function createTotalRow(tipo, list) {
   ).join('')
 
   const row = document.createElement('tr')
-  row.classList.add('table-dark', 'text-start')
+  row.classList.add('text-start')
   row.innerHTML = `<td><strong>Total de ${tipo}</strong></td>${monthlyCells}`
   return row
 }
@@ -43,7 +41,6 @@ export function createSaldoFinalRow(entradas, saidas) {
   ).join('')
 
   const row = document.createElement('tr')
-  row.classList.add('table-dark')
   row.innerHTML = `<td><strong>Saldo Final</strong></td>${monthlyCells}`
   return row
 }
