@@ -1,0 +1,13 @@
+/* Modal segue tema */
+.modal-content{ background:var(--fb-surface) }
+
+/* Bordas sutis */
+.modal-header,.modal-footer{ border-color:var(--fb-border)!important }
+
+/* Fechar visível em ambos os temas */
+.btn-close{ --bs-btn-close-color:var(--fb-ink); filter:none }
+[data-bs-theme="dark"] .btn-close{ filter:invert(1) grayscale(100%) brightness(140%) }
+
+/* Títulos/inputs responsivos */
+.modal-title{ font-size:calc(var(--fs-base) * 1.05) }
+.modal .form-label,.modal .form-control,.modal .form-select{ font-size:var(--fs-compact) }

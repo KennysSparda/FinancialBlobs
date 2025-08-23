@@ -112,7 +112,14 @@ export function showEntityDetailsModal(entity, onUpdate) {
       row.innerHTML = `
         <td>${item.month_ref.slice(0, 7)}</td>
         <td>${item.description}</td>
-        <td style="color:${color}">R$ ${parseFloat(item.value).toFixed(2)}</td>
+        <td>
+          <span class="currency" style="color:${color}">
+            <span class="currency__symbol" aria-hidden="true">R$</span>
+            <span class="currency__amount">
+              ${Number(item.value).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </span>
+          </span>
+        </td>
         <td>${item.installment_now}</td>
         <td>${item.installment_max}</td>
         <td>

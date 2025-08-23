@@ -1,0 +1,52 @@
+/* Tabela compacta e legível */
+#entityTable,.table{ font-size:var(--fs-compact) }
+
+.table th,.table td{
+  padding:.18rem .38rem; min-width:80px; font-size:var(--fs-compact);
+  text-align:center; vertical-align:middle; border:0
+}
+.table td:first-child,.table th:first-child{ text-align:left }
+.table tbody tr:not(:last-child){ border-bottom:1px solid var(--fb-border) }
+
+/* thead sticky (usa paleta do tema quando não .table-dark) */
+.table thead{ position:sticky; top:0; z-index:2 }
+.table thead:not(.table-dark){ background:var(--fb-table-head-bg); color:var(--fb-table-head-fg) }
+
+/* zebra off pra limpar visual */
+.table.table-striped{ --bs-table-striped-bg:transparent }
+
+/* não pintar spans coloridos */
+.table td span.text-success,
+.table td span.text-danger,
+.table td span.text-muted{
+  background:transparent!important; border-radius:0!important; box-shadow:none!important; padding:0!important
+}
+
+/* ===== Sticky da primeira coluna baseado em wrapper interno ===== */
+.table .col-entity{ padding:0 }                     /* tira padding da célula */
+.table .col-entity .sticky-col{ padding:.18rem .38rem } /* aplica no wrapper */
+
+/* cola o wrapper, não a célula (funciona em todos os navegadores) */
+.is-sticky-first-col .col-entity .sticky-col{
+  position:sticky; left:0; z-index:3; display:block;
+  background:var(--fb-surface);
+  border-right:1px solid var(--fb-border);
+  background-clip:padding-box
+}
+/* header por cima e com paleta do head */
+.is-sticky-first-col thead .col-entity .sticky-col{ z-index:4 }
+.is-sticky-first-col thead.table-dark .col-entity .sticky-col{
+  background:var(--fb-table-head-bg); color:var(--fb-table-head-fg)
+}
+
+/* sombra/divisor à direita */
+.is-sticky-first-col .col-entity .sticky-col{ box-shadow:6px 0 16px rgba(0,0,0,.08) }
+[data-bs-theme="dark"] .is-sticky-first-col .col-entity .sticky-col{ box-shadow:6px 0 16px rgba(0,0,0,.35) }
+
+/* largura mínima da coluna de entidade */
+.table .col-entity{ min-width:180px }
+@media (max-width:768px){ .table .col-entity{ min-width:140px } }
+
+/* switch mini no cabeçalho */
+.form-switch-mini{ transform:scale(.8); transform-origin:left center; margin-left:.25rem }
+.form-switch .form-check-input{ cursor:pointer }

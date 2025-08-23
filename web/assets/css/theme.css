@@ -1,0 +1,84 @@
+/* ========== LIGHT (PASTEL) ========== */
+:root,
+[data-bs-theme="light"]{
+  --fb-bg:#f7f7fb; --fb-surface:#fff; --fb-ink:#1f2430; --fb-muted:#6b7280;
+  --fb-primary:#a0c4ff; --fb-secondary:#ffafcc; --fb-accent:#b8c0ff;
+  --fb-success:#84dcc6; --fb-danger:#ffadad;
+
+  --bs-body-bg:var(--fb-bg); --bs-body-color:var(--fb-ink);
+  --bs-primary:var(--fb-primary); --bs-secondary:var(--fb-secondary);
+  --bs-success:var(--fb-success); --bs-danger:var(--fb-danger);
+
+  --tone-primary-weak:rgba(160,196,255,.18); --tone-primary-bd:rgba(160,196,255,.45);
+  --tone-danger-weak:rgba(255,173,173,.18);  --tone-danger-bd:rgba(255,173,173,.45);
+  --tone-accent-weak:rgba(184,192,255,.18);  --tone-accent-bd:rgba(184,192,255,.45);
+
+  --fb-nav-bg:#fff; --fb-nav-fg:#1f2430;
+  --fb-table-head-bg:#f0f3ff; --fb-table-head-fg:#1f2430;
+  --fb-table-row-bg:#fff; --fb-table-row-alt:#fafbff; --fb-border:#e5e7eb
+}
+
+/* navbar clara */
+[data-bs-theme="light"] .navbar.bg-dark{ background-color:var(--fb-nav-bg)!important }
+[data-bs-theme="light"] .navbar,
+[data-bs-theme="light"] .navbar .navbar-brand,
+[data-bs-theme="light"] .navbar .nav-link,
+[data-bs-theme="light"] .navbar .navbar-text{ color:var(--fb-nav-fg)!important }
+
+/* tabela clara */
+[data-bs-theme="light"] .table{
+  --bs-table-bg:var(--fb-table-row-bg);
+  --bs-table-striped-bg:var(--fb-table-row-alt);
+  --bs-table-border-color:var(--fb-border)
+}
+[data-bs-theme="light"] .table-dark{
+  --bs-table-bg:var(--fb-table-head-bg);
+  --bs-table-color:var(--fb-table-head-fg)
+}
+[data-bs-theme="light"] .btn-primary{ border:none }
+
+/* ========== DARK (CYBERPUNK) ========== */
+[data-bs-theme="dark"]{
+  --fb-bg:#0b0f19; --fb-surface:#0f1424; --fb-ink:#e2e8f0; --fb-muted:#94a3b8;
+  --fb-primary:#00f0ff; --fb-secondary:#ff00e6; --fb-accent:#faff00;
+  --fb-success:#00ff85; --fb-danger:#ff4d6d;
+
+  --bs-body-bg:var(--fb-bg); --bs-body-color:var(--fb-ink);
+  --bs-primary:var(--fb-primary); --bs-secondary:var(--fb-secondary);
+  --bs-success:var(--fb-success); --bs-danger:var(--fb-danger);
+
+  --tone-primary-weak:rgba(0,240,255,.12); --tone-primary-bd:rgba(0,240,255,.35);
+  --tone-danger-weak:rgba(255,77,109,.12); --tone-danger-bd:rgba(255,77,109,.35);
+  --tone-accent-weak:rgba(250,255,0,.12);  --tone-accent-bd:rgba(250,255,0,.35);
+
+  --fb-nav-bg:#0c1222; --fb-nav-fg:var(--fb-ink);
+  --fb-table-head-bg:#121a2e; --fb-table-head-fg:#e2e8f0;
+  --fb-table-row-bg:#0f1424; --fb-table-row-alt:#0d1322; --fb-border:#1f2a44
+}
+
+/* navbar dark com glow */
+[data-bs-theme="dark"] .navbar.bg-dark{
+  background:linear-gradient(90deg,#0c1222,#0e1a33);
+  box-shadow:0 0 0 1px rgba(0,240,255,.08),0 10px 30px rgba(0,0,0,.5),inset 0 0 20px rgba(255,0,230,.05)
+}
+[data-bs-theme="dark"] .navbar .navbar-brand{ text-shadow:0 0 8px rgba(0,240,255,.25) }
+
+/* tabela dark */
+[data-bs-theme="dark"] .table{
+  --bs-table-bg:var(--fb-table-row-bg);
+  --bs-table-striped-bg:var(--fb-table-row-alt);
+  --bs-table-border-color:var(--fb-border)
+}
+[data-bs-theme="dark"] .table-dark{
+  --bs-table-bg:var(--fb-table-head-bg);
+  --bs-table-color:var(--fb-table-head-fg)
+}
+
+/* botão primário neon */
+[data-bs-theme="dark"] .btn-primary{
+  background-color:var(--fb-primary); color:#0b0f19; border:none;
+  box-shadow:0 0 10px rgba(0,240,255,.35),0 0 30px rgba(0,240,255,.2)
+}
+[data-bs-theme="dark"] .btn-primary:hover{
+  box-shadow:0 0 12px rgba(0,240,255,.5),0 0 40px rgba(0,240,255,.25)
+}

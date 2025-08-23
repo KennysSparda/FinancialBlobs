@@ -1,0 +1,13 @@
+/* Moeda responsiva: símbolo separado do valor */
+.currency{ white-space:nowrap }
+.currency__symbol{ margin-right:.25rem; opacity:.9 }
+
+/* tablets/netbooks */
+@media (max-width:992px){
+  .currency__symbol{ font-size:.85em; margin-right:.15rem }
+}
+
+/* celulares muito pequenos */
+@media (max-width:420px){
+  .currency__symbol{ display:none }
+}

@@ -1,0 +1,58 @@
+/* Painel base */
+.fb-board{
+  background:var(--fb-surface);
+  border:1px solid var(--fb-border);
+  border-radius:16px;
+  padding:12px
+}
+[data-bs-theme="dark"] .fb-board{ box-shadow:0 0 0 1px rgba(0,240,255,.06),0 8px 24px rgba(0,0,0,.45) }
+[data-bs-theme="light"] .fb-board{ box-shadow:0 4px 20px rgba(31,35,41,.06) }
+
+/* ===== SPLIT: coluna congelada + tabela scroller ===== */
+.fb-board.fb-split{
+  display:grid;
+  grid-template-columns:auto 1fr;
+  align-items:start
+}
+
+/* coluna congelada à esquerda */
+.fb-freeze{
+  position:relative;
+  z-index:2;                 /* sobrepõe a tabela da direita no divisor */
+  background:var(--fb-surface);
+  border-right:1px solid var(--fb-border);
+  box-shadow:6px 0 16px rgba(0,0,0,.06)
+}
+[data-bs-theme="dark"] .fb-freeze{ box-shadow:6px 0 16px rgba(0,0,0,.35) }
+
+/* header da coluna congelada também fixa verticalmente */
+.fb-freeze thead th{
+  position:sticky;
+  top:0;
+  z-index:3;
+  background:var(--fb-table-head-bg);
+  color:var(--fb-table-head-fg)
+}
+
+/* largura confortável da coluna de entidade */
+.fb-freeze .table{ width:auto; min-width:200px }
+@media (max-width:768px){ .fb-freeze .table{ min-width:160px } }
+
+/* área rolável de meses */
+.fb-scroll{
+  width:100%;
+  overflow-x:auto;
+  overflow-y:visible;
+  position:relative
+}
+.fb-scroll .table{ width:100%; min-width:1100px }
+
+/* tipografia compacta */
+@media (max-width:768px){
+  .table th,.table td{ font-size:var(--fs-tiny); padding:.16rem .34rem }
+}
+@media (max-width:576px){
+  .table th,.table td{ font-size:var(--fs-tiny); padding:.14rem .30rem }
+  .navbar{ padding-top:.25rem; padding-bottom:.25rem }
+  .navbar .navbar-brand{ font-size:var(--fs-compact) }
+}

@@ -1,0 +1,42 @@
+/* Chips (Editar/Remover) dentro das listas */
+.modal .table .btn-link.edit-item,
+.modal .table .btn-link.delete-item{
+  display:inline-flex; align-items:center; gap:.35rem;
+  padding:.28rem .6rem; border-radius:999px; border:1px solid transparent;
+  text-decoration:none!important; line-height:1; font-weight:600;
+  background:transparent; box-shadow:none; font-size:var(--fs-tiny)
+}
+.modal .table .btn-link.edit-item{
+  color:var(--bs-primary)!important; background:var(--tone-primary-weak); border-color:var(--tone-primary-bd)
+}
+.modal .table .btn-link.edit-item:hover{
+  filter:brightness(1.05);
+  box-shadow:0 0 10px var(--tone-primary-weak), inset 0 0 10px var(--tone-primary-weak)
+}
+.modal .table .btn-link.delete-item{
+  color:var(--fb-danger)!important; background:var(--tone-danger-weak); border-color:var(--tone-danger-bd)
+}
+.modal .table .btn-link.delete-item:hover{
+  filter:brightness(1.05);
+  box-shadow:0 0 10px var(--tone-danger-weak), inset 0 0 10px var(--tone-danger-weak)
+}
+.modal .table .btn-link.edit-item:focus-visible{ outline:2px solid var(--tone-primary-bd); outline-offset:2px }
+.modal .table .btn-link.delete-item:focus-visible{ outline:2px solid var(--tone-danger-bd); outline-offset:2px }
+
+/* Botões do bloco Configurações */
+.modal #configContainer .btn-warning,
+.modal #configContainer .btn-danger{
+  border-radius:999px; padding:.45rem .9rem; font-weight:700; border:none; line-height:1; font-size:var(--fs-compact)
+}
+.modal #configContainer .btn-warning{ background:var(--fb-accent); color:#0b0f19 }
+[data-bs-theme="dark"] .modal #configContainer .btn-warning{ box-shadow:0 0 10px var(--tone-accent-weak),0 0 28px var(--tone-accent-weak) }
+[data-bs-theme="light"] .modal #configContainer .btn-warning{ box-shadow:0 4px 14px rgba(31,35,41,.10) }
+.modal #configContainer .btn-warning:hover{ filter:brightness(1.05) }
+
+.modal #configContainer .btn-danger{ background:var(--fb-danger); color:#0b0f19 }
+[data-bs-theme="dark"] .modal #configContainer .btn-danger{ box-shadow:0 0 10px var(--tone-danger-weak),0 0 28px var(--tone-danger-weak) }
+[data-bs-theme="light"] .modal #configContainer .btn-danger{ box-shadow:0 4px 14px rgba(31,35,41,.10) }
+.modal #configContainer .btn-danger:hover{ filter:brightness(1.05) }
+
+.modal #configContainer .btn-warning:focus-visible{ outline:2px solid var(--tone-accent-bd); outline-offset:2px }
+.modal #configContainer .btn-danger:focus-visible{ outline:2px solid var(--tone-danger-bd); outline-offset:2px }
