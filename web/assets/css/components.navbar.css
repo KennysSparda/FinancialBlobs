@@ -117,3 +117,20 @@
 @media (max-width: 576px){
   .fb-searchbox{ display: none } /* some no mobile pequeno, como no tabnews */
 }
+
+.fb-nav__routes .btn{
+  border-radius: 8px;
+  border: 1px solid var(--fb-border);
+  color: var(--fb-ink);
+  background: var(--fb-surface);
+}
+.fb-nav__routes .btn.btn-primary{
+  background: var(--tone-primary-weak);
+  border-color: var(--tone-primary-bd);
+  color: var(--bs-primary);
+  font-weight: 600;
+}
+.fb-nav__routes .btn:disabled{
+  opacity: .7;
+  pointer-events: none;
+}

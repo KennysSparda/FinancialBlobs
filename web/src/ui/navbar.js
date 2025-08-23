@@ -2,7 +2,7 @@ import { showEntityModal } from './modals/entityModal.js'
 import { isAuthenticated, clearToken } from '../auth.js'
 import { authAPI } from '../api.js'
 import { openAuthModal } from './modals/authModal.js'
-import { getThemeMode, setThemeMode, applyTheme, resolveTheme } from '../theme.js'
+import { getThemeMode, setThemeMode } from '../theme.js'
 
 export async function renderNavbar({ onAddEntity, onAuthChanged }) {
   const existing = document.querySelector('nav.fb-navbar')
@@ -12,7 +12,6 @@ export async function renderNavbar({ onAddEntity, onAuthChanged }) {
   const nav = document.createElement('nav')
   nav.className = 'fb-navbar navbar w-100 mb-3'
 
-  // busca central
   const searchHTML = `
     <div class="fb-searchbox">
       <span class="fb-search-icon">🔎</span>
@@ -25,10 +24,12 @@ export async function renderNavbar({ onAddEntity, onAuthChanged }) {
       <div class="container-fluid">
         <a href="#" class="navbar-brand fb-nav__brand">FinancialBlobs</a>
 
-        ${searchHTML}
+        <div class="fb-nav__routes d-flex gap-2">
+          <a href="#/" class="btn btn-sm" id="btnTable">Tabela</a>
+          <a href="#/dashboard" class="btn btn-sm" id="btnDashboard">Dashboard</a>
+        </div>
 
-        <div class="fb-nav__actions">
-          <!-- Botão de menu mais chamativo -->
+        <div class="fb-nav__actions d-flex align-items-center gap-2">
           <div class="dropdown">
             <button class="btn fb-iconbtn fb-menu-btn is-primary" id="btnMenu" data-bs-toggle="dropdown" aria-expanded="false" title="Menu">≡</button>
             <ul class="dropdown-menu dropdown-menu-end fb-nav-dropdown">
@@ -51,7 +52,6 @@ export async function renderNavbar({ onAddEntity, onAuthChanged }) {
     `
     document.body.prepend(nav)
 
-    // identidade
     try {
       const me = await authAPI.me()
       const nameEl = nav.querySelector('#meName')
@@ -60,12 +60,10 @@ export async function renderNavbar({ onAddEntity, onAuthChanged }) {
       onAuthChanged && onAuthChanged(false)
     }
 
-    // nova entidade
     nav.querySelector('#ddAddEntity').addEventListener('click', () => {
       showEntityModal(null, () => onAddEntity && onAddEntity())
     })
 
-    // sair
     nav.querySelector('#ddLogout').addEventListener('click', () => {
       clearToken()
       onAuthChanged && onAuthChanged(false)
@@ -74,8 +72,6 @@ export async function renderNavbar({ onAddEntity, onAuthChanged }) {
     nav.innerHTML = `
       <div class="container-fluid">
         <a href="#" class="navbar-brand fb-nav__brand">FinancialBlobs</a>
-
-        ${searchHTML}
 
         <div class="fb-nav__actions">
           <div class="dropdown">
@@ -100,25 +96,57 @@ export async function renderNavbar({ onAddEntity, onAuthChanged }) {
     nav.querySelector('#ddLogin').addEventListener('click', () => {
       openAuthModal(() => onAuthChanged && onAuthChanged(true))
     })
+    // marcar rota ativa (sempre que hash mudar)
+    function updateActive() {
+      const hash = location.hash || '#/'
+      const btnTable = nav.querySelector('#btnTable')
+      const btnDash = nav.querySelector('#btnDashboard')
+      if (!btnTable || !btnDash) return
+
+      // reset
+      btnTable.classList.remove('btn-primary')
+      btnDash.classList.remove('btn-primary')
+      btnTable.removeAttribute('disabled')
+      btnDash.removeAttribute('disabled')
+
+      if (hash.startsWith('#/dashboard')) {
+        btnDash.classList.add('btn-primary')
+        btnDash.setAttribute('disabled', 'true')
+      } else {
+        btnTable.classList.add('btn-primary')
+        btnTable.setAttribute('disabled', 'true')
+      }
+    }
+
+    updateActive()
+    window.addEventListener('hashchange', updateActive)
+    window.addEventListener('fb:nav:update', updateActive)
+
+
   }
 
-  // switch de tema (🌙 / Auto / ☀️)
+  // tema
   nav.querySelectorAll('.fb-theme-segment .seg').forEach(btn => {
     btn.addEventListener('click', () => {
       const m = btn.dataset.mode
       setThemeMode(m)
-      // atualiza marcação ativa imediatamente
       nav.querySelectorAll('.fb-theme-segment .seg').forEach(b => b.classList.toggle('active', b === btn))
     })
   })
 
-  // busca: placeholder por enquanto
+  // busca: por enquanto só loga, mas no dashboard podemos usar como filtro rápido
   const input = nav.querySelector('#fbSearch')
   if (input) {
     input.addEventListener('keydown', e => {
       if (e.key === 'Enter') {
-        // no futuro: chamar um searchAPI
-        console.log('buscar:', e.target.value.trim())
+        const q = e.target.value.trim()
+        // gancho: se estiver no dashboard, dispara um evento para filtrar os gráficos
+        if (location.hash.startsWith('#/dashboard')) {
+          const ev = new CustomEvent('fb:dash:search', { detail: { q } })
+          window.dispatchEvent(ev)
+        } else {
+          console.log('buscar:', q)
+        }
       }
     })
   }

@@ -8,7 +8,7 @@ import {
 import { attachEntityClickHandlers } from './entityHandlers.js'
 
 export async function renderEntityTable() {
-  const container = document.getElementById('entityTable')
+  const container = document.getElementById('app')
   container.innerHTML = ''
 
   const entities = await entityAPI.listWithItems()
