@@ -137,5 +137,123 @@ module.exports = {
       }
       throw err
     }
+  },
+
+  async updateRecurringSeriesOwnedByAnchor(anchor, userId, scope, data) {
+    // série recorrente: mesma entidade, recorrente=1, mesma descrição+tipo
+    // forward: meses >= anchor.month_ref
+    const sets = []
+    const args = []
+
+    if (typeof data.description !== 'undefined') {
+      sets.push('i.description = ?')
+      args.push(data.description)
+    }
+    if (typeof data.type !== 'undefined') {
+      sets.push('i.type = ?')
+      args.push(data.type)
+    }
+    if (typeof data.value !== 'undefined') {
+      sets.push('i.value = ?')
+      args.push(data.value)
+    }
+
+    if (!sets.length) return { affectedRows: 0 }
+
+    let sql = `
+      UPDATE financial_items i
+      JOIN financial_entities e ON e.id = i.entity_id
+      SET ${sets.join(', ')}
+      WHERE i.entity_id = ?
+        AND i.recurring = 1
+        AND i.description = ?
+        AND i.type = ?
+        AND e.user_id = ?
+    `
+    args.push(anchor.entity_id, anchor.description, anchor.type, userId)
+
+    if (scope === 'forward') {
+      sql += ' AND i.month_ref >= ?'
+      args.push(anchor.month_ref)
+    }
+
+    const [res] = await db.query(sql, args)
+    return res
+  },
+
+  async deleteRecurringSeriesOwnedByAnchor(anchor, userId, scope) {
+    let sql = `
+      DELETE i FROM financial_items i
+      JOIN financial_entities e ON e.id = i.entity_id
+      WHERE i.entity_id = ?
+        AND i.recurring = 1
+        AND i.description = ?
+        AND i.type = ?
+        AND e.user_id = ?
+    `
+    const args = [anchor.entity_id, anchor.description, anchor.type, userId]
+
+    if (scope === 'forward') {
+      sql += ' AND i.month_ref >= ?'
+      args.push(anchor.month_ref)
+    }
+
+    const [res] = await db.query(sql, args)
+    return res
+  },
+
+  async updateInstallmentSeriesOwnedByAnchor(anchor, userId, scope, data) {
+    // série parcelada: mesma entidade, mesma descrição, mesmo installment_max
+    const sets = []
+    const args = []
+
+    if (typeof data.description !== 'undefined') {
+      sets.push('i.description = ?')
+      args.push(data.description)
+    }
+    if (typeof data.value !== 'undefined') {
+      sets.push('i.value = ?')
+      args.push(data.value)
+    }
+    if (!sets.length) return { affectedRows: 0 }
+
+    let sql = `
+      UPDATE financial_items i
+      JOIN financial_entities e ON e.id = i.entity_id
+      SET ${sets.join(', ')}
+      WHERE i.entity_id = ?
+        AND i.description = ?
+        AND i.installment_max = ?
+        AND e.user_id = ?
+    `
+    args.push(anchor.entity_id, anchor.description, anchor.installment_max, userId)
+
+    if (scope === 'forward') {
+      sql += ' AND i.installment_now >= ?'
+      args.push(anchor.installment_now)
+    }
+
+    const [res] = await db.query(sql, args)
+    return res
+  },
+
+  async deleteInstallmentSeriesOwnedByAnchor(anchor, userId, scope) {
+    let sql = `
+      DELETE i FROM financial_items i
+      JOIN financial_entities e ON e.id = i.entity_id
+      WHERE i.entity_id = ?
+        AND i.description = ?
+        AND i.installment_max = ?
+        AND e.user_id = ?
+    `
+    const args = [anchor.entity_id, anchor.description, anchor.installment_max, userId]
+
+    if (scope === 'forward') {
+      sql += ' AND i.installment_now >= ?'
+      args.push(anchor.installment_now)
+    }
+
+    const [res] = await db.query(sql, args)
+    return res
   }
 }

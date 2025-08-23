@@ -69,6 +69,12 @@ export const itemAPI = {
   list: () => request('GET', '/items'),
   get: (id) => request('GET', `/items/${id}`),
   create: (data) => request('POST', '/items', data),
-  update: (id, data) => request('PUT', `/items/${id}`, data),
-  remove: (id) => request('DELETE', `/items/${id}`)
+  update: (id, data, opts = {}) => {
+    const scope = opts.scope || 'one'
+    return request('PUT', `/items/${id}?scope=${scope}`, data)
+  },
+  remove: (id, opts = {}) => {
+    const scope = opts.scope || 'one'
+    return request('DELETE', `/items/${id}?scope=${scope}`)
+  }
 }

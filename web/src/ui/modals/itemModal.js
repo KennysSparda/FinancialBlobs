@@ -1,5 +1,6 @@
 // /src/ui/modals/itemModal.js
 import { itemAPI } from '../../api.js'
+import { pickScope } from './scopePicker.js'
 
 export function showItemModal({ entityId, item = null, onSave, defaultMonthRef = null }) {
   const existingModal = document.getElementById('itemModal')
@@ -78,7 +79,13 @@ export function showItemModal({ entityId, item = null, onSave, defaultMonthRef =
 
     try {
       if (item) {
-        await itemAPI.update(item.id, data)
+        let scope = 'one'
+        const isSeries = item.recurring || (item.installment_max > 1)
+        if (isSeries) {
+          scope = await pickScope({ mode: 'update', defaultScope: 'forward' })
+          if (scope === null) return  // usuário cancelou → não faz update
+        }
+        await itemAPI.update(item.id, data, { scope })
       } else {
         await itemAPI.create(data)
       }
@@ -88,6 +95,7 @@ export function showItemModal({ entityId, item = null, onSave, defaultMonthRef =
       alert(`Erro ao salvar item: ${err.message}`)
     }
   })
+
 
   modalEl.addEventListener('hidden.bs.modal', () => modalEl.remove())
 }

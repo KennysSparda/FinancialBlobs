@@ -1,4 +1,5 @@
 import { entityAPI, itemAPI } from '../../api.js'
+import { pickScope } from './scopePicker.js'
 
 export function showEntityDetailsModal(entity, onUpdate) {
   const modalEl = document.createElement('div')
@@ -146,15 +147,34 @@ export function showEntityDetailsModal(entity, onUpdate) {
         )
       }
     })
-
+    // dentro de showEntityDetailsModal.js
     body.querySelectorAll('.delete-item').forEach(btn => {
       btn.onclick = async () => {
         const itemId = btn.dataset.id
-        if (confirm('Remover item?')) {
-          await itemAPI.remove(itemId)
+        const item = freshItems.find(i => i.id == itemId)
+        if (!item) return
+
+        try {
+          let opts = undefined
+          const isSeries = item.recurring || (item.installment_max > 1)
+
+          if (isSeries) {
+            const choice = await pickScope({ mode: 'delete', defaultScope: 'forward' })
+            if (choice === null) return  // cancelado
+            opts = { scope: choice }
+          } else {
+            const ok = confirm('Remover item?')
+            if (!ok) return
+          }
+
+          await itemAPI.remove(itemId, opts)
+
+          // refresca UI local e principal
           freshItems = []
-          renderItems()
+          await renderItems()
           if (onUpdate) onUpdate()
+        } catch (err) {
+          alert(`Erro ao remover item: ${err.message}`)
         }
       }
     })

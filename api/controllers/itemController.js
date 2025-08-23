@@ -3,6 +3,8 @@ const ItemModel = require('../models/itemModel')
 const EntityModel = require('../models/entityModel')
 const ItemService = require('../services/itemService')
 
+const SCOPE = ['one', 'forward', 'all']
+
 module.exports = {
   async list(req, res) {
     try {
@@ -28,37 +30,32 @@ module.exports = {
   async create(req, res) {
     try {
       const item = req.body
-
-      // 1) valida payload
       if (!item.entity_id || !item.description || !item.type || !item.value || !item.month_ref) {
         return res.status(422).json({ error: 'Dados incompletos' })
       }
 
-      // 2) valida posse da entidade (camada extra de segurança na API)
-      //    garanta que existe no model: getOwnedById(entityId, userId)
+      // valida posse da entidade
       const [ent] = await EntityModel.getOwnedById(item.entity_id, req.userId)
       if (!ent.length) {
         return res.status(404).json({ error: 'Entidade não encontrada para este usuário' })
       }
 
-      // 3) cria com regras (service retorna resumo: created/skipped)
+      // cria com regras (dedupe e parcelas/recorrência)
       const result = await ItemService.createWithRules(item, req.userId)
 
-      // 4) se nada foi criado, responde 409 com detalhes para o front exibir
-      if (!result.created_count || result.created_count === 0) {
+      // se nada foi criado, responder 409 (esperado nos testes)
+      if (!result.created_count) {
         return res.status(409).json({
           error: 'Itens já existem para os meses informados — nada foi criado',
           details: { skipped_count: result.skipped_count, skipped: result.skipped }
         })
       }
 
-      // 5) criado com sucesso (pode ter itens ignorados também)
       return res.status(201).json({
         message: `${result.created_count} item(ns) criado(s). ${result.skipped_count} ignorado(s).`,
         ...result
       })
     } catch (err) {
-      // erros “esperados” com status vindo do service (ex.: 404 ownership)
       if (err.status) {
         return res.status(err.status).json({
           error: err.message,
@@ -76,34 +73,47 @@ module.exports = {
       if (!Number.isInteger(id)) {
         return res.status(400).json({ error: 'ID inválido' })
       }
-      const {
-        description,
-        type,
-        value,
-        recurring,
-        installment_now,
-        installment_max,
-        month_ref
-      } = req.body
 
-      const [result] = await ItemModel.updateOwned(id, req.userId, {
-        description,
-        type,
-        value,
-        recurring,
-        installment_now,
-        installment_max,
-        month_ref
-      })
+      const scope = SCOPE.includes(req.query.scope) ? req.query.scope : 'one'
 
-      if (result.affectedRows === 0) return res.status(404).json({ error: 'Item não encontrado' })
-      res.status(200).json({ message: 'Item atualizado com sucesso' })
+      // ancora + ownership
+      const [rows] = await ItemModel.getOwnedById(id, req.userId)
+      if (!rows.length) return res.status(404).json({ error: 'Item não encontrado' })
+      const anchor = rows[0]
+
+      const data = {
+        description: req.body.description,
+        type: req.body.type,
+        value: req.body.value,
+        recurring: req.body.recurring,
+        installment_now: req.body.installment_now,
+        installment_max: req.body.installment_max,
+        month_ref: req.body.month_ref
+      }
+
+      let result
+      if (scope === 'one') {
+        ;[result] = await ItemModel.updateOwned(id, req.userId, data)
+      } else if (anchor.installment_max > 1) {
+        result = await ItemModel.updateInstallmentSeriesOwnedByAnchor(anchor, req.userId, scope, data)
+      } else if (anchor.recurring) {
+        result = await ItemModel.updateRecurringSeriesOwnedByAnchor(anchor, req.userId, scope, data)
+      } else {
+        ;[result] = await ItemModel.updateOwned(id, req.userId, data)
+      }
+
+      if (!result || result.affectedRows === 0) {
+        return res.status(404).json({ error: 'Nada foi atualizado' })
+      }
+
+      res.status(200).json({ message: `Atualizado (${result.affectedRows})` })
     } catch (err) {
       console.error(err)
       res.status(500).json({ error: 'Erro ao atualizar item' })
     }
   },
 
+  // /api/controllers/itemController.js (apenas o método remove)
   async remove(req, res) {
     try {
       const id = Number(req.params.id)
@@ -111,16 +121,40 @@ module.exports = {
         return res.status(400).json({ error: 'ID inválido' })
       }
 
-      // busca owned pra saber se é parcelado e também garantir posse
+      // ancora do item (com ownership)
       const [rows] = await ItemModel.getOwnedById(id, req.userId)
       if (!rows.length) return res.status(404).json({ error: 'Item não encontrado' })
-      const item = rows[0]
+      const anchor = rows[0]
 
-      if (item.installment_max > 1) {
-        await ItemModel.deleteInstallmentGroupOwnedByItemId(id, req.userId)
+      // escopo vindo da query
+      const rawScope = req.query.scope
+      const validScopes = ['one', 'forward', 'all']
+
+      // regra de default:
+      // - parcelado (installment_max > 1): default = 'all' (compat com comportamento antigo/teste)
+      // - recorrente: default = 'one' (ou 'forward' se preferir)
+      let scope = validScopes.includes(rawScope) ? rawScope : 'one'
+      if (!rawScope && anchor.installment_max > 1) {
+        scope = 'all'
+      }
+      // se quiser default 'forward' para recorrentes, descomente:
+      // if (!rawScope && anchor.recurring) {
+      //   scope = 'forward'
+      // }
+
+      let result
+      if (scope === 'one') {
+        ;[result] = await ItemModel.deleteOwned(id, req.userId)
+      } else if (anchor.installment_max > 1) {
+        result = await ItemModel.deleteInstallmentSeriesOwnedByAnchor(anchor, req.userId, scope)
+      } else if (anchor.recurring) {
+        result = await ItemModel.deleteRecurringSeriesOwnedByAnchor(anchor, req.userId, scope)
       } else {
-        const [result] = await ItemModel.deleteOwned(id, req.userId)
-        if (result.affectedRows === 0) return res.status(404).json({ error: 'Item não encontrado' })
+        ;[result] = await ItemModel.deleteOwned(id, req.userId)
+      }
+
+      if (!result || result.affectedRows === 0) {
+        return res.status(404).json({ error: 'Nada foi removido' })
       }
 
       res.status(204).send()
@@ -129,4 +163,5 @@ module.exports = {
       res.status(500).json({ error: 'Erro ao remover item' })
     }
   }
+
 }
