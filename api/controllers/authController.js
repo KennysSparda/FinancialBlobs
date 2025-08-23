@@ -1,7 +1,7 @@
 // /api/controllers/authController.js
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const User = require('../models/financialUserModel')
+const UserModel = require('../models/userModel')
 
 function signToken(userId) {
   return jwt.sign({}, process.env.JWT_SECRET, {
@@ -18,13 +18,13 @@ module.exports = {
         return res.status(422).json({ error: 'name, email e password são obrigatórios' })
       }
 
-      const [exists] = await User.findByEmail(email)
+      const [exists] = await UserModel.findByEmail(email)
       if (exists.length) {
         return res.status(409).json({ error: 'email já cadastrado' })
       }
 
       const hash = await bcrypt.hash(password, 10)
-      const [result] = await User.create(name, email, hash)
+      const [result] = await UserModel.create(name, email, hash)
       const token = signToken(result.insertId)
 
       res.status(201).json({ token })
@@ -41,7 +41,7 @@ module.exports = {
         return res.status(422).json({ error: 'email e password são obrigatórios' })
       }
 
-      const [rows] = await User.findByEmail(email)
+      const [rows] = await UserModel.findByEmail(email)
       if (!rows.length) {
         return res.status(401).json({ error: 'credenciais inválidas' })
       }
@@ -62,7 +62,7 @@ module.exports = {
 
   async me(req, res) {
     try {
-      const [rows] = await User.findById(req.userId)
+      const [rows] = await UserModel.findById(req.userId)
       if (!rows.length) return res.status(404).json({ error: 'usuário não encontrado' })
       res.json(rows[0])
     } catch (e) {
@@ -79,16 +79,16 @@ module.exports = {
       }
 
       if (email) {
-        const [existing] = await User.findByEmail(email)
+        const [existing] = await UserModel.findByEmail(email)
         if (existing.length && existing[0].id !== req.userId) {
           return res.status(409).json({ error: 'email já em uso' })
         }
       }
 
-      const [result] = await User.updateProfileOwned(req.userId, { name, email })
+      const [result] = await UserModel.updateProfileOwned(req.userId, { name, email })
       if (result.affectedRows === 0) return res.status(404).json({ error: 'usuário não encontrado' })
 
-      const [rows] = await User.findById(req.userId)
+      const [rows] = await UserModel.findById(req.userId)
       res.json(rows[0])
     } catch (e) {
       console.error(e)
@@ -103,14 +103,14 @@ module.exports = {
         return res.status(422).json({ error: 'current_password e new_password são obrigatórios' })
       }
 
-      const [secretRows] = await User.findSecretById(req.userId)
+      const [secretRows] = await UserModel.findSecretById(req.userId)
       if (!secretRows.length) return res.status(404).json({ error: 'usuário não encontrado' })
 
       const ok = await bcrypt.compare(current_password, secretRows[0].password_hash)
       if (!ok) return res.status(401).json({ error: 'senha atual inválida' })
 
       const newHash = await bcrypt.hash(new_password, 10)
-      await User.updatePasswordOwned(req.userId, newHash)
+      await UserModel.updatePasswordOwned(req.userId, newHash)
 
       res.json({ message: 'senha atualizada com sucesso' })
     } catch (e) {

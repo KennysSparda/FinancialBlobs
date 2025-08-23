@@ -1,7 +1,7 @@
 // /api/routes/entities.js
 const express = require('express')
 const router = express.Router()
-const controller = require('../controllers/financialEntityController')
+const controller = require('../controllers/entityController')
 const auth = require('../middleware/auth')
 
 // Lista entidades do usuário logado

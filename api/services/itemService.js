@@ -1,7 +1,7 @@
-// /api/services/financialItemService.js
+// /api/services/itemService.js
 const dayjs = require('dayjs')
-const FinancialItem = require('../models/financialItemModel')
-const FinancialEntity = require('../models/financialEntityModel')
+const ItemModel = require('../models/itemModel')
+const EntityModel = require('../models/entityModel')
 
 async function createWithRules(itemData, userId) {
   const {
@@ -16,7 +16,7 @@ async function createWithRules(itemData, userId) {
   } = itemData
 
   // 1) valida ownership da entidade
-  const [entRows] = await FinancialEntity.getOwnedById(entity_id, userId)
+  const [entRows] = await EntityModel.getOwnedById(entity_id, userId)
   if (!entRows.length) {
     const e = new Error('Entidade não encontrada para este usuário')
     e.status = 404
@@ -41,7 +41,7 @@ async function createWithRules(itemData, userId) {
   const created = []
   const skipped = []
   for (const item of toInsert) {
-    const { insertId, skipped: isDup } = await FinancialItem.createUnique(item)
+    const { insertId, skipped: isDup } = await ItemModel.createUnique(item)
     if (isDup) {
       skipped.push({ month_ref: item.month_ref, description, value })
     } else {

@@ -1,7 +1,7 @@
 // /api/routes/items.js
 const express = require('express')
 const router = express.Router()
-const controller = require('../controllers/financialItemController')
+const controller = require('../controllers/itemController')
 const auth = require('../middleware/auth')
 
 // Lista todos os itens pertencentes ao usuário (via JOIN nos controllers)

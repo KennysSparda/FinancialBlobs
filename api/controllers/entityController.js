@@ -1,11 +1,11 @@
-// /api/controllers/financialEntityController.js
-const FinancialEntity = require('../models/financialEntityModel')
-const FinancialItem = require('../models/financialItemModel')
+// /api/controllers/entityController.js
+const EntityModel = require('../models/entityModel')
+const ItemModel = require('../models/itemModel')
 
 module.exports = {
   async list(req, res) {
     try {
-      const [rows] = await FinancialEntity.getAllByUserId(req.userId)
+      const [rows] = await EntityModel.getAllByUserId(req.userId)
       res.json(rows)
     } catch (err) {
       console.error(err)
@@ -15,7 +15,7 @@ module.exports = {
 
   async get(req, res) {
     try {
-      const [rows] = await FinancialEntity.getOwnedById(req.params.id, req.userId)
+      const [rows] = await EntityModel.getOwnedById(req.params.id, req.userId)
       if (!rows.length) return res.status(404).json({ error: 'Entidade não encontrada' })
       res.json(rows[0])
     } catch (err) {
@@ -31,7 +31,7 @@ module.exports = {
       return
     }
     try {
-      const [result] = await FinancialEntity.createForUser(req.userId, { name, description })
+      const [result] = await EntityModel.createForUser(req.userId, { name, description })
       res.status(201)
         .location(`/api/v1/entities/${result.insertId}`)
         .json({ message: 'Entidade criada', id: result.insertId })
@@ -44,7 +44,7 @@ module.exports = {
   async update(req, res) {
     try {
       const { name, description } = req.body
-      const [result] = await FinancialEntity.updateOwned(req.params.id, req.userId, { name, description })
+      const [result] = await EntityModel.updateOwned(req.params.id, req.userId, { name, description })
       if (result.affectedRows === 0) return res.status(404).json({ error: 'Entidade não encontrada' })
       res.json({ message: 'Updated' })
     } catch (err) {
@@ -55,7 +55,7 @@ module.exports = {
 
   async remove(req, res) {
     try {
-      const [result] = await FinancialEntity.deleteOwned(req.params.id, req.userId)
+      const [result] = await EntityModel.deleteOwned(req.params.id, req.userId)
       if (result.affectedRows === 0) return res.status(404).json({ error: 'Entidade não encontrada' })
       res.status(204).send()
     } catch (err) {
@@ -66,11 +66,11 @@ module.exports = {
 
   async listItemsByEntityId(req, res) {
     try {
-      const [items] = await FinancialItem.getByEntityIdOwned(req.params.id, req.userId)
+      const [items] = await ItemModel.getByEntityIdOwned(req.params.id, req.userId)
       // se a entidade não for do usuário, lista vem vazia — podemos diferenciar 404 se preferir:
       if (!items.length) {
         // opção: verificar posse explícita e retornar 404
-        // const [ent] = await FinancialEntity.getOwnedById(req.params.id, req.userId)
+        // const [ent] = await EntityModel.getOwnedById(req.params.id, req.userId)
         // if (!ent.length) return res.status(404).json({ error: 'Entidade não encontrada' })
       }
       res.status(200).json(items)

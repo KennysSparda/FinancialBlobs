@@ -1,4 +1,4 @@
-// /api/models/financialItemModel.js
+// /api/models/itemModel.js
 const db = require('../utils/db')
 
 module.exports = {
