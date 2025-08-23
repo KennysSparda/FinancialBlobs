@@ -162,20 +162,29 @@ describe('🧪 Testes API de Itens (com auth)', () => {
       month_ref: '2025-08-01'
     })
 
-    await api.post('/items', {
-      entity_id: entityId,
-      description: 'Plano de saúde',
-      type: 'saida',
-      value: 200,
-      recurring: true,
-      installment_now: 1,
-      installment_max: 1,
-      month_ref: '2025-08-01'
-    })
+
+
+
+    try {
+      await api.post('/items', {
+        entity_id: entityId,
+        description: 'Plano de saúde',
+        type: 'saida',
+        value: 200,
+        recurring: true,
+        installment_now: 1,
+        installment_max: 1,
+        month_ref: '2025-08-01'
+      })
+      throw new Error('esperava 409 e não veio')
+    } catch (err) {
+      expect(err.response.status).toBe(409)
+    }
 
     const allItems = await api.get(`/entities/${entityId}/items`)
     const recorrentes = allItems.data.filter(i => i.description === 'Plano de saúde')
     expect(recorrentes.length).toBe(24)
+
   })
 
   test('Deve remover todas as parcelas de um item parcelado ao deletar uma delas', async () => {

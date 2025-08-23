@@ -1,9 +1,8 @@
 // /api/services/financialItemService.js
+const dayjs = require('dayjs')
 const FinancialItem = require('../models/financialItemModel')
 const FinancialEntity = require('../models/financialEntityModel')
-const dayjs = require('dayjs')
 
-// Agora exige userId para validar ownership
 async function createWithRules(itemData, userId) {
   const {
     entity_id,
@@ -16,57 +15,55 @@ async function createWithRules(itemData, userId) {
     month_ref
   } = itemData
 
-  // 1) valida posse da entidade
-  const [entityRows] = await FinancialEntity.getOwnedById(entity_id, userId)
-  if (!entityRows.length) {
-    const err = new Error('Entidade não encontrada')
-    err.status = 404
-    throw err
+  // 1) valida ownership da entidade
+  const [entRows] = await FinancialEntity.getByIdOwned(entity_id, userId)
+  if (!entRows.length) {
+    const e = new Error('Entidade não encontrada para este usuário')
+    e.status = 404
+    throw e
   }
 
-  // 2) base para evitar duplicidade
-  const [existing] = await FinancialItem.getByEntityIdOwned(entity_id, userId)
-
-  const itemsToInsert = []
-  const startMonth = dayjs(month_ref)
-
-  // mesma lógica: recorrente => 24 meses, senão (parcelas restantes)
+  // 2) prepara a sequência
+  const start = dayjs(month_ref)
   const count = recurring ? 24 : (installment_max - installment_now + 1)
+  const toInsert = Array.from({ length: count }, (_, i) => ({
+    entity_id,
+    description,
+    type,
+    value,
+    recurring: !!recurring,
+    installment_now: installment_now + i,
+    installment_max,
+    month_ref: start.add(i, 'month').format('YYYY-MM-DD')
+  }))
 
-  for (let i = 0; i < count; i++) {
-    const currentInstallment = installment_now + i
-    const ref = startMonth.add(i, 'month').format('YYYY-MM-DD')
-
-    // evita duplicidade pra recorrentes ou parcelados com mesmo valor e mesma competência
-    const duplicate = (recurring || installment_max > 1) && existing.find(e =>
-      e.description === description &&
-      Number(e.value) === Number(value) &&
-      dayjs(e.month_ref).format('YYYY-MM') === ref.slice(0, 7)
-    )
-
-    if (duplicate) continue
-
-    itemsToInsert.push({
-      entity_id,
-      description,
-      type,
-      value,
-      recurring,
-      installment_now: currentInstallment,
-      installment_max,
-      month_ref: ref
-    })
+  // 3) insere com proteção de índice único
+  const created = []
+  const skipped = []
+  for (const item of toInsert) {
+    const { insertId, skipped: isDup } = await FinancialItem.createUnique(item)
+    if (isDup) {
+      skipped.push({ month_ref: item.month_ref, description, value })
+    } else {
+      created.push(insertId)
+    }
   }
 
-  const ids = []
-  for (const item of itemsToInsert) {
-    const [res] = await FinancialItem.create(item)
-    ids.push(res.insertId)
+  // 4) sem novos itens → 409
+  if (created.length === 0) {
+    const e = new Error('Itens já existem para os meses informados — nada foi criado')
+    e.status = 409
+    e.details = { skipped_count: skipped.length, skipped }
+    throw e
   }
 
-  return ids
+  // 5) retorno feliz
+  return {
+    created_count: created.length,
+    skipped_count: skipped.length,
+    ids: created,
+    skipped
+  }
 }
 
-module.exports = {
-  createWithRules
-}
+module.exports = { createWithRules }

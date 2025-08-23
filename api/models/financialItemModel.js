@@ -110,5 +110,32 @@ module.exports = {
       [item.entity_id, item.description, item.installment_max, userId]
     )
     return res
+  },
+
+  createUnique: async (data, conn) => {
+    const sql = `
+      INSERT INTO financial_items 
+      (entity_id, description, type, value, recurring, installment_now, installment_max, month_ref)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `
+    const args = [
+      data.entity_id,
+      data.description,
+      data.type,
+      data.value,
+      data.recurring ? 1 : 0,
+      data.installment_now ?? 0,
+      data.installment_max ?? 0,
+      data.month_ref
+    ]
+    try {
+      const [res] = await (conn || db).query(sql, args)
+      return { insertId: res.insertId, skipped: false }
+    } catch (err) {
+      if (err.code === 'ER_DUP_ENTRY') {
+        return { insertId: null, skipped: true }
+      }
+      throw err
+    }
   }
 }

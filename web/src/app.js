@@ -4,6 +4,7 @@ import { renderEntityTable } from './ui/renderEntityTable.js'
 import { isAuthenticated } from './auth.js'
 import { openAuthModal } from './ui/modals/authModal.js'
 import { applyTheme } from './theme.js'
+import { renderLanding } from './ui/landing.js'
 
 applyTheme()
 
@@ -12,7 +13,7 @@ async function handleAuthChanged(loggedIn) {
   if (loggedIn) {
     refresh()
   } else {
-    clearContent()
+    renderLanding()
   }
 }
 
@@ -20,19 +21,11 @@ async function boot() {
   await renderNavbar({ onAddEntity: refresh, onAuthChanged: handleAuthChanged })
 
   if (!isAuthenticated()) {
-    openAuthModal(async () => {
-      await renderNavbar({ onAddEntity: refresh, onAuthChanged: handleAuthChanged })
-      refresh()
-    })
+    renderLanding()
     return
   }
 
   refresh()
-}
-
-function clearContent() {
-  const table = document.getElementById('entityTable')
-  if (table) table.innerHTML = '<div class="text-muted">Faça login para visualizar suas entidades</div>'
 }
 
 function refresh() {

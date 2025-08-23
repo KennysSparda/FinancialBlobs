@@ -29,25 +29,44 @@ module.exports = {
     try {
       const item = req.body
 
+      // 1) valida payload
       if (!item.entity_id || !item.description || !item.type || !item.value || !item.month_ref) {
         return res.status(422).json({ error: 'Dados incompletos' })
       }
 
-      // valida posse da entidade aqui também (camada extra)
+      // 2) valida posse da entidade (camada extra de segurança na API)
+      //    garanta que existe no model: getOwnedById(entityId, userId)
       const [ent] = await FinancialEntity.getOwnedById(item.entity_id, req.userId)
-      if (!ent.length) return res.status(404).json({ error: 'Entidade não encontrada' })
+      if (!ent.length) {
+        return res.status(404).json({ error: 'Entidade não encontrada para este usuário' })
+      }
 
-      // chama service passando userId
-      const ids = await FinancialItemService.createWithRules(item, req.userId)
+      // 3) cria com regras (service retorna resumo: created/skipped)
+      const result = await FinancialItemService.createWithRules(item, req.userId)
 
-      res.status(201).json({
-        message: `${ids.length} item(ns) criado(s) com sucesso`,
-        ids
+      // 4) se nada foi criado, responde 409 com detalhes para o front exibir
+      if (!result.created_count || result.created_count === 0) {
+        return res.status(409).json({
+          error: 'Itens já existem para os meses informados — nada foi criado',
+          details: { skipped_count: result.skipped_count, skipped: result.skipped }
+        })
+      }
+
+      // 5) criado com sucesso (pode ter itens ignorados também)
+      return res.status(201).json({
+        message: `${result.created_count} item(ns) criado(s). ${result.skipped_count} ignorado(s).`,
+        ...result
       })
     } catch (err) {
+      // erros “esperados” com status vindo do service (ex.: 404 ownership)
+      if (err.status) {
+        return res.status(err.status).json({
+          error: err.message,
+          ...(err.details ? { details: err.details } : {})
+        })
+      }
       console.error(err)
-      const status = err.status || 500
-      res.status(status).json({ error: err.message || 'Erro ao inserir item(s)' })
+      return res.status(500).json({ error: 'Erro ao inserir item(s)' })
     }
   },
 
