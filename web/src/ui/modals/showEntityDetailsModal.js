@@ -1,4 +1,5 @@
 import { entityAPI, itemAPI } from '../../api.js'
+
 export function showEntityDetailsModal(entity, onUpdate) {
   const modalEl = document.createElement('div')
   modalEl.className = 'modal fade'
@@ -6,22 +7,21 @@ export function showEntityDetailsModal(entity, onUpdate) {
 
   modalEl.innerHTML = `
     <div class="modal-dialog modal-lg modal-dialog-scrollable">
-      <div class="modal-content bg-dark text-light">
-        <div class="modal-header border-secondary">
-
+      <div class="modal-content border-0 shadow">
+        <div class="modal-header">
           <h5 class="modal-title">${entity.name}</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
 
-        <div class="modal-body text-light">
-          <p class="text-light">${entity.description || 'Sem descrição'}</p>
+        <div class="modal-body">
+          <p class="mb-3">${entity.description || 'Sem descrição'}</p>
 
           <ul class="nav nav-tabs" id="entityTab" role="tablist">
             <li class="nav-item" role="presentation">
-              <button class="nav-link bg-dark text-light active" data-bs-toggle="tab" data-bs-target="#tab-items" type="button">Itens</button>
+              <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-items" type="button">Itens</button>
             </li>
             <li class="nav-item" role="presentation">
-              <button class="nav-link bg-dark text-light" data-bs-toggle="tab" data-bs-target="#tab-config" type="button">Configurações</button>
+              <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-config" type="button">Configurações</button>
             </li>
           </ul>
 
@@ -30,14 +30,14 @@ export function showEntityDetailsModal(entity, onUpdate) {
               <div class="mb-2 d-flex justify-content-between align-items-center">
                 <label class="form-label mb-0">
                   Mês de referência:
-                  <select class="form-select form-select-sm d-inline w-auto bg-dark text-light" id="monthSelector"></select>
+                  <select class="form-select form-select-sm d-inline w-auto" id="monthSelector"></select>
                 </label>
               </div>
 
-              <table class="table table-sm table-dark">
-                <thead>
+              <table class="table table-sm">
+                <thead class="table-dark">
                   <tr>
-                    <th>Mes</th>
+                    <th>Mês</th>
                     <th>Descrição</th>
                     <th>Valor</th>
                     <th>Parc. Atual</th>
@@ -63,41 +63,27 @@ export function showEntityDetailsModal(entity, onUpdate) {
   const modal = new bootstrap.Modal(modalEl)
   modal.show()
 
-  // Recarregar tabela de itens
   const monthSelector = modalEl.querySelector('#monthSelector')
-
   let freshItems = []
 
   const renderItems = async () => {
-
     const body = modalEl.querySelector('#itemsTableBody')
     body.innerHTML = ''
 
-    // Pega todos os itens apenas uma vez (cache local)
     if (!freshItems.length) {
-      // Salva o mês selecionado atualmente, se houver
       const previousSelectedMonth = monthSelector.value
-
       freshItems = await entityAPI.getItems(entity.id)
 
-      // Preencher seletor de meses
       monthSelector.innerHTML = ''
-      const uniqueMonths = [...new Set(freshItems.map(item => item.month_ref.slice(0, 7)))].sort()
+      const uniqueMonths = [...new Set(freshItems.map(i => i.month_ref.slice(0, 7)))].sort()
       for (const month of uniqueMonths) {
-        const option = document.createElement('option')
-        option.value = month
-
-        const [year, monthNum] = month.split('-').map(Number)
-        const date = new Date(year, monthNum - 1)
-        option.textContent = date.toLocaleDateString('pt-BR', {
-          month: 'long',
-          year: 'numeric'
-        })
-
-        monthSelector.appendChild(option)
+        const opt = document.createElement('option')
+        opt.value = month
+        const [y, m] = month.split('-').map(Number)
+        opt.textContent = new Date(y, m - 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })
+        monthSelector.appendChild(opt)
       }
 
-      // Restaura mês anteriormente selecionado se ainda existir, senão define padrão
       if (previousSelectedMonth && uniqueMonths.includes(previousSelectedMonth)) {
         monthSelector.value = previousSelectedMonth
       } else {
@@ -106,29 +92,27 @@ export function showEntityDetailsModal(entity, onUpdate) {
       }
     }
 
-
     const selectedMonth = monthSelector.value
-    const filteredItems = freshItems
-      .filter(item => item.month_ref.startsWith(selectedMonth))
+    const filtered = freshItems
+      .filter(i => i.month_ref.startsWith(selectedMonth))
       .sort((a, b) => {
-        // Itens parcelados primeiro
         if (a.installment_max > 1 && b.installment_max <= 1) return -1
         if (a.installment_max <= 1 && b.installment_max > 1) return 1
-        return 0 // mantém a ordem original se ambos forem do mesmo tipo
+        return 0
       })
 
-
-    if (!filteredItems.length) {
-      body.innerHTML = `<tr><td colspan="4" class="text-muted">Nenhum item neste mês.</td></tr>`
+    if (!filtered.length) {
+      body.innerHTML = `<tr><td colspan="6" class="text-muted">Nenhum item neste mês.</td></tr>`
       return
     }
 
-    for (const item of filteredItems) {
+    for (const item of filtered) {
       const row = document.createElement('tr')
+      const color = item.type === 'entrada' ? 'var(--fb-success)' : 'var(--fb-danger)'
       row.innerHTML = `
         <td>${item.month_ref.slice(0, 7)}</td>
         <td>${item.description}</td>
-        <td style="${item.type == 'entrada' ? 'color:#00aa00;' : 'color:#ff0000;'}">R$ ${parseFloat(item.value).toFixed(2)}</td>
+        <td style="color:${color}">R$ ${parseFloat(item.value).toFixed(2)}</td>
         <td>${item.installment_now}</td>
         <td>${item.installment_max}</td>
         <td>
@@ -139,7 +123,6 @@ export function showEntityDetailsModal(entity, onUpdate) {
       body.appendChild(row)
     }
 
-    // Botões de ação
     body.querySelectorAll('.edit-item').forEach(btn => {
       btn.onclick = () => {
         const itemId = btn.dataset.id
@@ -173,7 +156,6 @@ export function showEntityDetailsModal(entity, onUpdate) {
   renderItems()
   monthSelector.addEventListener('change', renderItems)
 
-  // Botão + Item
   modalEl.querySelector('#addItemBtn').addEventListener('click', () => {
     const selectedMonth = monthSelector.value
     import('./itemModal.js').then(({ showItemModal }) =>
@@ -189,19 +171,18 @@ export function showEntityDetailsModal(entity, onUpdate) {
     )
   })
 
-
-  // Aba de configurações
   import('./entityModal.js').then(({ showEntityModal }) => {
     const configDiv = modalEl.querySelector('#configContainer')
-    const configBtn = document.createElement('button')
-    configBtn.className = 'btn btn-warning btn-sm mb-3'
-    configBtn.textContent = 'Editar Entidade'
-    configBtn.onclick = () =>
+    const editBtn = document.createElement('button')
+    editBtn.className = 'btn btn-warning btn-sm mb-3'
+    editBtn.textContent = 'Editar Entidade'
+    editBtn.onclick = () => {
       showEntityModal(entity, () => {
         modal.hide()
         if (onUpdate) onUpdate()
       })
-    configDiv.appendChild(configBtn)
+    }
+    configDiv.appendChild(editBtn)
 
     if (entity?.id) {
       const deleteBtn = document.createElement('button')
