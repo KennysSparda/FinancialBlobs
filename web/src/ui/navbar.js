@@ -15,7 +15,9 @@ export async function renderNavbar({ onAddEntity, onAuthChanged }) {
   if (isAuthenticated()) {
     nav.innerHTML = `
       <div class="container-fluid">
-        <a href="#/" class="navbar-brand fb-nav__brand">FinancialBlobs</a>
+        <a href="#/" class="navbar-brand fb-nav__brand">
+          <img src="assets/images/logo_transparente.png" alt="FinancialBlobs" class="logo"/>
+        </a>
 
         <div class="fb-nav__routes d-flex gap-2">
           <a href="#/" class="btn btn-sm" id="btnTable">Tabela</a>

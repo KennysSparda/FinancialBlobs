@@ -1,13 +1,13 @@
 # FinancialBlobs
 
-**Gerencie suas entidades financeiras mês a mês.**
+**Gerencie seus blobs financeiras mês a mês.**
 
 ---
 
 ## 🚀 Visão Geral
 
-O **FinancialBlobs** é um app simples e rápido para organizar suas finanças por **entidade** (cartões, contas, salário, cofrinho etc.) e por **mês**.  
-Você pode criar entidades, lançar **itens** (entradas/saídas), marcar como **recorrente** (24 meses) ou **parcelado** (n parcelas), e acompanhar **totais** e **saldo final** mês a mês.
+O **FinancialBlobs** é um app simples e rápido para organizar suas finanças por **blob** (cartões, contas, salário, cofrinho etc.) e por **mês**.  
+Você pode criar blobs, lançar **itens** (entradas/saídas), marcar como **recorrente** (24 meses) ou **parcelado** (n parcelas), e acompanhar **totais** e **saldo final** mês a mês.
 
 A aplicação é composta por:
 
@@ -19,13 +19,13 @@ A aplicação é composta por:
 ## ✨ Principais Recursos
 
 - 🔐 **Auth JWT**: registro, login e perfil (`/auth/register`, `/auth/login`, `/auth/me`)
-- 👤 **Ownership**: cada entidade pertence a um usuário (`user_id`); usuários não veem dados de outros
+- 👤 **Ownership**: cada blob pertence a um usuário (`user_id`); usuários não veem dados de outros
 - ➕ **Itens recorrentes** (24 meses) e **parcelados** (de `installment_now` até `installment_max`)
 - 🧯 **Anti-duplicação**: proteção lógica e por **índice único** no banco (retorna **409** quando nada novo é criado)
 - 📊 **Totais por mês** e **Saldo final** (entradas + saídas negativas) por coluna
 - 🧊 **Tabela com 1ª coluna fixa** (layout split) e rolagem horizontal dos meses
 - 🎨 **Temas**: claro/pastel, escuro/cyberpunk e **Auto** (segue SO)
-- 🧪 **Testes E2E** (Jest + Axios) para auth, entidades e itens
+- 🧪 **Testes E2E** (Jest + Axios) para auth, blobs e itens
 
 ---
 
@@ -61,15 +61,15 @@ web/
 
 > **Uso do token**: envie `Authorization: Bearer <TOKEN>` nas rotas protegidas.
 
-### 📁 Entidades Financeiras
+### 📁 blobs Financeiras
 | Método | Rota                           | Descrição |
 |-------:|--------------------------------|-----------|
-| GET    | `/api/v1/entities`             | Lista entidades **do usuário** |
-| GET    | `/api/v1/entities/:id`         | Retorna entidade (se for do usuário) |
-| GET    | `/api/v1/entities/:id/items`   | Lista itens da entidade (se for do usuário) |
-| POST   | `/api/v1/entities`             | Cria entidade (`name`, `description`) |
-| PUT    | `/api/v1/entities/:id`         | Atualiza entidade (ownership checada) |
-| DELETE | `/api/v1/entities/:id`         | Remove entidade (ownership checada) |
+| GET    | `/api/v1/entities`             | Lista blobs **do usuário** |
+| GET    | `/api/v1/entities/:id`         | Retorna blob (se for do usuário) |
+| GET    | `/api/v1/entities/:id/items`   | Lista itens da blob (se for do usuário) |
+| POST   | `/api/v1/entities`             | Cria blob (`name`, `description`) |
+| PUT    | `/api/v1/entities/:id`         | Atualiza blob (ownership checada) |
+| DELETE | `/api/v1/entities/:id`         | Remove blob (ownership checada) |
 
 ### 📄 Itens Financeiros
 | Método | Rota                 | Descrição |
@@ -86,9 +86,9 @@ web/
 - **201**: `{ message, created_count, skipped_count, ids, skipped }`
 - **409** (nada novo criado): `{ error, details: { skipped_count, skipped } }`
 - **422**: dados incompletos
-- **404**: entidade não pertence ao usuário
+- **404**: blob não pertence ao usuário
 
-> A “não duplicação” é por **entidade** e **mês** (mesmo `description`, `type`, `value`, `installment_max`, `month_ref`).
+> A “não duplicação” é por **blob** e **mês** (mesmo `description`, `type`, `value`, `installment_max`, `month_ref`).
 
 ---
 
@@ -132,7 +132,7 @@ npm test
 
 Os testes cobrem:
 - Auth (`/auth`)
-- Entidades (`/entities`)
+- blobs (`/entities`)
 - Itens (`/items`), incluindo:
   - recorrentes (24 meses)
   - parcelados (n parcelas)
@@ -150,7 +150,7 @@ O arquivo `api/utils/db.js` cria as tabelas se não existirem (em ambiente novo)
 - `financial_items` (id, entity_id FK → `financial_entities`, description, type, value, flags de recorrência/parcelas, `month_ref`)
 - Índices auxiliares (`idx_entities_user_id`, `idx_items_entity_id`, `idx_items_month_ref`)
 
-> **Anti-duplicação** por índice único (por entidade/mês):
+> **Anti-duplicação** por índice único (por blob/mês):
 ```sql
 ALTER TABLE financial_items
   MODIFY type ENUM('entrada','saida') NOT NULL,
@@ -162,7 +162,7 @@ ALTER TABLE financial_items
 ```
 
 ### Escopo da deduplicação
-- **Padrão (recomendado)**: **por entidade** (chave inclui `entity_id`)
+- **Padrão (recomendado)**: **por blob** (chave inclui `entity_id`)
 - Opcional: **por usuário** (exige `user_id` em `financial_items` + índice com `user_id`)
 
 ---
@@ -171,20 +171,20 @@ ALTER TABLE financial_items
 
 - Tema **light (pastel)** / **dark (cyberpunk)** / **Auto** (segue o sistema)
 - Navbar minimalista com **busca central** (placeholder funcional) + **menu** com ações e switch de tema
-- Tabela “**split**”: 1ª coluna fixa (entidades) + meses roláveis lateralmente (sincronização de alturas por `ResizeObserver`)
+- Tabela “**split**”: 1ª coluna fixa (blobs) + meses roláveis lateralmente (sincronização de alturas por `ResizeObserver`)
 - Valores em BRL com **símbolo responsivo** (oculta em telas muito pequenas)
-- Modais de **auth**, **entidades** e **itens** theme-aware
+- Modais de **auth**, **blobs** e **itens** theme-aware
 
 ---
 
 ## 🔐 Segurança e Erros (API)
 
-- **Ownership** checado em todas as operações (entidade/item precisa pertencer ao usuário autenticado)
+- **Ownership** checado em todas as operações (blob/item precisa pertencer ao usuário autenticado)
 - **JWT obrigatório** nas rotas privadas (`Authorization: Bearer ...`)
 - **Status codes** padronizados:
   - `201` — criado (com sumário de `created_count` e `skipped_count` em itens)
   - `409` — nada novo criado (duplicata), inclui `details.skipped`
-  - `404` — entidade/item não encontrado para o usuário
+  - `404` — blob/item não encontrado para o usuário
   - `422` — payload inválido
   - `500` — erro interno
 
@@ -214,5 +214,5 @@ Livre para uso pessoal/educacional.
 
 - Página/landing com **prints** do dashboard (borrados) e dos modais
 - Busca funcional no front
-- Export (CSV/Excel) por mês/entidade
+- Export (CSV/Excel) por mês/blob
 - PWA (instalável) e cache offline básico
