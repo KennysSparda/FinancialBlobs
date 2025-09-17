@@ -3,3 +3,4 @@ node_modules
 # Jest coverage reports
 /coverage/
 .vscode/
+api/dist/
