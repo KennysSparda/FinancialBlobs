@@ -16,6 +16,7 @@ app.use(express.json())
 app.use('/api/v1/auth', authRoutes)
 app.use('/api/v1/entities', entityRoutes)
 app.use('/api/v1/items', itemRoutes)
+app.use('/api/v1/health', (req, res) => res.send('OK'))
 
 app.listen(port, () => {
   console.log(`Servidor rodando em http://localhost:${port}`)

@@ -28,6 +28,7 @@ module.exports = {
       const token = signToken(result.insertId)
 
       res.status(201).json({ token })
+      console.log(`[${new Date().toLocaleString()}] Usuário registrado: ${email}`)
     } catch (e) {
       console.error(e)
       res.status(500).json({ error: 'erro ao registrar' })
@@ -54,6 +55,7 @@ module.exports = {
 
       const token = signToken(user.id)
       res.json({ token })
+      console.log(`[${new Date().toLocaleString()}] Usuário logado: ${email}`)
     } catch (e) {
       console.error(e)
       res.status(500).json({ error: 'erro no login' })
@@ -65,6 +67,7 @@ module.exports = {
       const [rows] = await UserModel.findById(req.userId)
       if (!rows.length) return res.status(404).json({ error: 'usuário não encontrado' })
       res.json(rows[0])
+      console.log(`[${new Date().toLocaleString()}] Perfil acessado: ${rows[0].email}`)
     } catch (e) {
       console.error(e)
       res.status(500).json({ error: 'erro ao obter perfil' })
@@ -90,6 +93,7 @@ module.exports = {
 
       const [rows] = await UserModel.findById(req.userId)
       res.json(rows[0])
+      console.log(`[${new Date().toLocaleString()}] Perfil atualizado: ${rows[0].email}`)
     } catch (e) {
       console.error(e)
       res.status(500).json({ error: 'erro ao atualizar perfil' })
@@ -113,6 +117,8 @@ module.exports = {
       await UserModel.updatePasswordOwned(req.userId, newHash)
 
       res.json({ message: 'senha atualizada com sucesso' })
+      console.log(`[${new Date().toLocaleString()}] Senha alterada para o usuário ID: ${req.userId}`)
+      
     } catch (e) {
       console.error(e)
       res.status(500).json({ error: 'erro ao alterar senha' })
