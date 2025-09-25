@@ -2,10 +2,10 @@
 import { getDate } from './data.js'
 
 export function initDateFilter({ mountEl, items, onChange }) {
-  const state = { mode: 'month', ym: null, startYM: null, endYM: null }
+  const state = { mode: 'month', ym: toYM(new Date()), startYM: null, endYM: null }
   const ymList = monthsFromItems(items)
   const lastYM = ymList[ymList.length - 1] || toYM(new Date())
-
+  const actualYM = toYM(new Date())
   mountEl.innerHTML = `
     <div class="card">
       <div class="card-body d-flex flex-wrap align-items-center gap-3">
@@ -39,13 +39,13 @@ export function initDateFilter({ mountEl, items, onChange }) {
   const selStart = mountEl.querySelector('#selStart')
   const selEnd = mountEl.querySelector('#selEnd')
 
-  fillMonthSelect(selMonth, ymList, lastYM)
+  fillMonthSelect(selMonth, ymList, actualYM)
   fillMonthSelect(selStart, ymList, ymList[0])
   fillMonthSelect(selEnd, ymList, lastYM)
 
   // inicia no modo "Mês" e já define o valor padrão
   state.mode = 'month'
-  state.ym = lastYM
+  state.ym = actualYM
   blockMonth.classList.remove('d-none')
   blockRange.classList.add('d-none')
   emit()
