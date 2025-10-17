@@ -6,6 +6,7 @@ export function initDateFilter({ mountEl, items, onChange }) {
   const ymList = monthsFromItems(items)
   const lastYM = ymList[ymList.length - 1] || toYM(new Date())
   const actualYM = toYM(new Date())
+
   mountEl.innerHTML = `
     <div class="card">
       <div class="card-body d-flex flex-wrap align-items-center gap-3">

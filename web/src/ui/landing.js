@@ -1,16 +1,15 @@
 import { openAuthModal } from './modals/authModal.js'
 
 const heroImagesDefault = [
-  'assets/img/landing/hero-1.png',
-  'assets/img/landing/hero-2.png',
-  'assets/img/landing/hero-3.png'
+  '/assets/images/landing/hero-1.png',
+  '/assets/images/landing/hero-2.png',
+  '/assets/images/landing/hero-3.png'
 ]
 
 const modalImagesDefault = [
-  { src: 'assets/img/landing/modal-login.png', cap: 'Criar/editar entidade' },
-  { src: 'assets/img/landing/modal-entidade.png', cap: 'Adicionar itens (recorrente/parcelado)' },
-  { src: 'assets/img/landing/modal-item.png', cap: 'Detalhar e filtrar itens por mês' },
-  { src: 'assets/img/landing/modal-4.png', cap: 'Gerar próximos meses sem duplicar' }
+  { src: '/assets/images/landing/modal-login.png', cap: 'Criar/editar entidade' },
+  { src: '/assets/images/landing/modal-entidade.png', cap: 'Adicionar itens (recorrente/parcelado)' },
+  { src: '/assets/images/landing/modal-item.png', cap: 'Detalhar e filtrar itens por mês' }
 ]
 
 export function renderLanding({ heroImages = heroImagesDefault, modals = modalImagesDefault } = {}) {

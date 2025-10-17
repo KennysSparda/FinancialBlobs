@@ -67,18 +67,80 @@ module.exports = {
   async listItemsByEntityId(req, res) {
     try {
       const [items] = await ItemModel.getByEntityIdOwned(req.params.id, req.userId)
-      // se a entidade não for do usuário, lista vem vazia — podemos diferenciar 404 se preferir:
-      if (!items.length) {
-        // opção: verificar posse explícita e retornar 404
-        // const [ent] = await EntityModel.getOwnedById(req.params.id, req.userId)
-        // if (!ent.length) return res.status(404).json({ error: 'Entidade não encontrada' })
-      }
       res.status(200).json(items)
     } catch (err) {
       console.error('[ERRO] Falha ao buscar itens:', err)
       res.status(500).json({ error: 'Erro ao buscar itens da entidade' })
     }
   },
+
+  // ===== novos handlers p/ cobrir os testes =====
+
+  async pay(req, res) {
+    try {
+      const [result] = await EntityModel.markPaidOwned(req.params.id, req.userId, null)
+      if (result.affectedRows === 0) return res.status(404).json({ error: 'Entidade não encontrada' })
+      res.status(200).json({ message: 'Entidade marcada como paga' })
+    } catch (err) {
+      console.error('pay', err)
+      res.status(500).json({ error: 'Falha ao marcar entidade como paga' })
+    }
+  },
+
+  async reopen(req, res) {
+    try {
+      const [result] = await EntityModel.reopenOwned(req.params.id, req.userId)
+      if (result.affectedRows === 0) return res.status(404).json({ error: 'Entidade não encontrada' })
+      res.status(200).json({ message: 'Entidade reaberta' })
+    } catch (err) {
+      console.error('reopen', err)
+      res.status(500).json({ error: 'Falha ao reabrir entidade' })
+    }
+  },
+
+  async cancel(req, res) {
+    try {
+      const [result] = await EntityModel.cancelOwned(req.params.id, req.userId)
+      if (result.affectedRows === 0) return res.status(404).json({ error: 'Entidade não encontrada' })
+      res.status(200).json({ message: 'Entidade cancelada' })
+    } catch (err) {
+      console.error('cancel', err)
+      res.status(500).json({ error: 'Falha ao cancelar entidade' })
+    }
+  },
+
+  async payAllItems(req, res) {
+    try {
+      // idempotente, mesmo se não houver itens
+      await EntityModel.markAllItemsPaidOwned(req.params.id, req.userId, null)
+      res.status(200).json({ message: 'Itens da entidade marcados como pagos' })
+    } catch (err) {
+      console.error('payAllItems', err)
+      res.status(500).json({ error: 'Falha ao pagar itens da entidade' })
+    }
+  },
+
+  // /api/controllers/entityController.js
+  async progress(req, res) {
+    try {
+      const data = await EntityModel.getProgressOwned(req.params.id, req.userId)
+      if (!data) return res.status(404).json({ error: 'Entidade não encontrada' })
+
+      const normalized = {
+        ...data,
+        items_total: Number(data.items_total),
+        items_pagos: Number(data.items_pagos),
+        pct_pago: Number(data.pct_pago)
+      }
+
+      res.status(200).json(normalized)
+    } catch (err) {
+      console.error('progress', err)
+      res.status(500).json({ error: 'Falha ao obter progresso da entidade' })
+    }
+  },
+
+  // ===== utilitários já existentes =====
 
   async clearEntityByMonth(req, res) {
     try {

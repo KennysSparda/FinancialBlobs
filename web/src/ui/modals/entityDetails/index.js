@@ -1,3 +1,4 @@
+// /src/ui/modals/entityDetails/index.js
 import { buildEntityDetailsModal } from './build.js'
 import { initItemsSection } from './items.js'
 import { initConfigSection } from './config.js'

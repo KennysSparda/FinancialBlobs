@@ -22,4 +22,11 @@ router.put('/:id', auth(), controller.update)
 // Remove entidade do usuário
 router.delete('/:id', auth(), controller.remove)
 
+// ===== novas rotas de status/progresso =====
+router.post('/:id/pay', auth(), controller.pay)
+router.post('/:id/reopen', auth(), controller.reopen)
+router.post('/:id/cancel', auth(), controller.cancel)
+router.post('/:id/pay-all-items', auth(), controller.payAllItems)
+router.get('/:id/progress', auth(), controller.progress)
+
 module.exports = router

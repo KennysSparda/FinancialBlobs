@@ -46,12 +46,21 @@ export const authAPI = {
 
 // Entidades
 export const entityAPI = {
+  // já existentes
   list: () => request('GET', '/entities'),
   get: (id) => request('GET', `/entities/${id}`),
   create: (data) => request('POST', '/entities', data),
   update: (id, data) => request('PUT', `/entities/${id}`, data),
   remove: (id) => request('DELETE', `/entities/${id}`),
   getItems: (id) => request('GET', `/entities/${id}/items`),
+
+  // status da ENTIDADE (se você já tem, mantenha)
+  pay: (id) => request('POST', `/entities/${id}/pay`),
+  reopen: (id) => request('POST', `/entities/${id}/reopen`),
+  cancel: (id) => request('POST', `/entities/${id}/cancel`),
+  progress: (id) => request('GET', `/entities/${id}/progress`),
+
+  // === helpers que faltaram ===
   listWithItems: async () => {
     const entities = await entityAPI.list()
     const withItems = await Promise.all(
@@ -61,8 +70,35 @@ export const entityAPI = {
       })
     )
     return withItems
+  },
+
+  listWithProgress: async () => {
+    const entities = await entityAPI.list()
+    const withProgress = await Promise.all(
+      entities.map(async e => {
+        const prog = await entityAPI.progress(e.id).catch(() => null)
+        return { ...e, progress: prog }
+      })
+    )
+    return withProgress
+  },
+
+  listWithItemsAndProgress: async () => {
+    const entities = await entityAPI.list()
+    const full = await Promise.all(
+      entities.map(async e => {
+        const [items, prog] = await Promise.all([
+          entityAPI.getItems(e.id),
+          entityAPI.progress(e.id).catch(() => null)
+        ])
+        return { ...e, items, progress: prog }
+      })
+    )
+    return full
   }
+
 }
+
 
 // Itens
 export const itemAPI = {

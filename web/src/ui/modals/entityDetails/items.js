@@ -1,3 +1,5 @@
+// /src/ui/modals/entityDetails/items.js
+
 import { entityAPI, itemAPI } from '../../../api.js'
 import { pickScope } from '../scopePicker.js'
 import { monthLabel } from '../../../utils/date.js'
